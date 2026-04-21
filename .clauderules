@@ -1,0 +1,170 @@
+# Context: DevFolio Builder
+
+Tu es un Senior Frontend Engineer spécialisé en React et TypeScript. Tu assistes au développement de "DevFolio Builder", un Website Builder open-source pour CV de développeurs.
+
+## Tech Stack Obligatoire
+
+- **Framework:** React 18 + Vite + TypeScript (Strict Mode).
+- **State Management:** Zustand (avec middleware persist).
+- **Styling:** Tailwind CSS v4 (IMPORTANT : Utiliser la nouvelle syntaxe `@theme` dans CSS, pas de tailwind.config.js complexe).
+- **Drag & Drop:** @dnd-kit (Sortable).
+- **Icons:** Lucide React.
+- **Architecture:** Local-first (données stockées dans localStorage via le store).
+
+## Principes de Codage
+
+1. **Composants Fonctionnels :** Utiliser des "Arrow Functions" et le typage explicite des Props.
+2. **Data-Driven UI :** L'UI est le miroir de l'objet `Block` défini dans `src/types`.
+3. **Performance :** Utiliser les sélecteurs Zustand pour éviter les re-renders (ex: `const blocks = useBuilderStore(s => s.blocks)`).
+4. **Tailwind v4 :** Ne jamais suggérer de modifications dans `tailwind.config.js` sans demander. Préférer l'injection de variables dans `@theme` dans `index.css`.
+5. **Édition Directe :** Privilégier `contentEditable` pour les modifications de texte simples dans les blocs pour une expérience WYSIWYG.
+
+## Structure des Dossiers à respecter
+
+- `src/components/blocks/` : Composants de rendu des blocs (ex: HeaderBlock, TerminalBlock).
+- `src/components/builder/` : Logique de l'éditeur (Sidebar, Canvas, Sortable).
+- `src/store/` : Logique Zustand (useBuilderStore.ts).
+- `src/types/` : Définitions TypeScript globales.
+
+## Instructions Spécifiques pour les Nouveaux Blocs
+
+Lors de la création d'un nouveau bloc :
+
+1. Ajouter le type dans `BlockType` (src/types/index.ts).
+2. Créer le composant de rendu dans `src/components/blocks/`.
+3. L'enregistrer dans le `switch` de `SortableBlock.tsx`.
+4. L'ajouter à la liste `BLOCK_LIBRARY` dans `Sidebar.tsx`.
+
+## Couleurs Tailwind Personnalisées Disponibles
+
+```
+bg-builder-bg        → #0f172a (arrière-plan sombre)
+bg-builder-panel     → #1e293b (panneaux latéraux)
+border-builder-border → #334155 (bordures)
+```
+
+## Icônes Lucide React à Utiliser
+
+Les icônes suivantes sont **DISPONIBLES** et testées :
+
+- `Mail`, `Code`, `ExternalLink`, `Terminal`, `Type`, `List`, `Cpu`
+- `Layout`, `GripVertical`, `Trash2`
+
+**ÉVITER ABSOLUMENT** : `Github`, `Linkedin`, `Globe`, `Twitter`, `Bluesky` (non-natives).
+
+## Patterns TypeScript à Respecter
+
+```typescript
+// ✅ BON : Import avec type
+import type { Block } from "../../types.ts";
+
+// ✅ BON : Typage explicite des props
+interface SortableBlockProps {
+  block: Block;
+}
+
+// ✅ BON : Sélecteur Zustand optimisé
+const blocks = useBuilderStore((s) => s.blocks);
+
+// ❌ MAUVAIS : Importer sans type
+import { Block } from "../../types.ts";
+
+// ❌ MAUVAIS : Props sans typage
+export default function MyComponent({ block }: any);
+```
+
+## Conventions de Nommage
+
+- **Fichiers composants** : PascalCase (ex: HeaderBlock.tsx)
+- **Fichiers utilitaires** : camelCase (ex: useBuilderStore.ts)
+- **Props interfaces** : `{ComponentName}Props` (ex: `HeaderBlockProps`)
+- **Types exportés** : Toujours avec le mot-clé `type` (ex: `export type BlockType`)
+
+## Patterns d'Édition Inline (contentEditable)
+
+```typescript
+// ✅ BON : Sauvegarder au blur
+<h1
+  contentEditable
+  suppressContentEditableWarning
+  onBlur={(e) => updateBlock(block.id, { content: { ...block.content, name: e.currentTarget.innerText } })}
+  className="outline-none focus:ring-2 ring-indigo-500/30 rounded px-1"
+>
+  {name}
+</h1>
+
+// ❌ MAUVAIS : Pas de suppressContentEditableWarning
+<h1 contentEditable>Titre</h1>
+
+// ❌ MAUVAIS : Édition sur onChange (trop de re-renders)
+<h1 contentEditable onChange={...}>Titre</h1>
+```
+
+## Imports à Toujours Vérifier
+
+```typescript
+// ✅ Chemin avec extension .ts pour les fichiers locaux
+import type { Block } from "../types.ts";
+import { useBuilderStore } from "../store/useBuilderStore";
+
+// ✅ Chemin correct pour les blocs
+import HeaderBlock from "../blocks/HeaderBlock";
+
+// ❌ Pas d'extension = erreur Vite
+import { Block } from "../types";
+```
+
+## Erreurs Courantes à Éviter
+
+1. **"Cannot find module"** → Ajouter l'extension `.ts` aux imports locaux
+2. **"Github icon not exported"** → Utiliser `Code` à la place de `Github`
+3. **Multiple default exports** → Un seul `export default` par fichier
+4. **Re-renders massifs** → Utiliser les sélecteurs Zustand (`s => s.property`)
+5. **Styles ne s'appliquent pas** → Vérifier que les couleurs sont définies dans `@theme` de `index.css`
+
+## Checklist avant de soumettre du Code
+
+- [ ] Tous les imports utilisent `import type` pour les types TypeScript
+- [ ] Les chemin d'import sont relatifs (`../../`) et ont l'extension `.ts`
+- [ ] Les icônes utilisées existent dans Lucide React
+- [ ] Le composant utilise `suppressContentEditableWarning` si contentEditable
+- [ ] Les sélecteurs Zustand sont optimisés (`s => s.property`)
+- [ ] Le composant gère les valeurs par défaut du `block.content`
+- [ ] Les classes Tailwind correspondent aux couleurs de `@theme`
+
+## Workflow Git (OBLIGATOIRE après chaque fonctionnalité)
+
+À chaque fois qu'une fonctionnalité est terminée et testée :
+
+```bash
+# 1. Ajouter tous les fichiers modifiés
+git add .
+
+# 2. Commiter avec un message cohérent et descriptif
+# Format recommandé : [type]: description courte
+# Exemples :
+git commit -m "feat: add HeaderBlock editable component"
+git commit -m "fix: correct lucide-react icon imports"
+git commit -m "refactor: simplify Tailwind v4 configuration"
+git commit -m "docs: update .clauderules with git workflow"
+
+# 3. Pousser les modifications vers le dépôt
+git push
+```
+
+### Types de Commits à Utiliser
+
+- `feat:` → Nouvelle fonctionnalité
+- `fix:` → Correction de bug
+- `refactor:` → Refactorisation du code
+- `docs:` → Mise à jour documentation
+- `style:` → Changements de style (formatting, pas de logique)
+- `chore:` → Tâches de maintenance
+- `test:` → Ajout ou modification de tests
+
+### Règles de Commits
+
+- ✅ Messages en anglais et cohérents
+- ✅ Messages courts et descriptifs (< 72 caractères)
+- ✅ Un commit par fonctionnalité (pas de mélange)
+- ✅ Ne jamais forcer un push (sauf si vraiment nécessaire)

@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+/* On définit le thème directement ici, plus besoin du fichier JS pour ça */
+@theme {
+  --color-builder-bg: #0f172a;
+  --color-builder-panel: #1e293b;
+  --color-builder-border: #334155;
+  
+  /* On peut aussi définir nos couleurs d'accentuation */
+  --color-accent-primary: #6366f1; /* indigo-500 */
+}
+
+@layer base {
+  body {
+    /* Maintenant, bg-builder-bg est reconnu car défini dans @theme */
+    @apply bg-builder-bg text-slate-200 overflow-hidden;
+  }
+  
+  /* Petit fix pour s'assurer que toute l'app prend la hauteur de l'écran */
+  #root {
+    @apply h-full;
+  }
+}
