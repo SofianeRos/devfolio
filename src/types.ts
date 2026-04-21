@@ -15,6 +15,7 @@ export interface Block {
   type: BlockType;
   content: any;
   styles: BlockStyles;
+  theme?: string; // Nouveau : référence au thème appliqué
 }
 
 export interface BuilderState {
@@ -27,3 +28,23 @@ export interface BuilderState {
   reorderBlocks: (activeId: string, overId: string) => void;
   selectBlock: (id: string | null) => void;
 }
+
+// Définition des thèmes disponibles
+export interface Theme {
+  id: string;
+  name: string;
+  description: string;
+  category: BlockType;
+  colors: {
+    bg: string;
+    text: string;
+    accent: string;
+    secondary?: string;
+  };
+  animation?: string;
+  borderStyle?: string;
+  borderRadius?: string;
+  shadow?: string;
+  customClass?: string;
+}
+

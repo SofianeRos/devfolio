@@ -21,3 +21,314 @@
     @apply h-full;
   }
 }
+
+/* ============================================
+   ANIMATIONS PERSONNALISÉES - 25+ VARIATIONS
+   ============================================ */
+
+/* Animations de base */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-fast {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ✨ ANIMATIONS SPÉCIALISÉES - GLOWS & EFFECTS */
+
+@keyframes glow-effect {
+  0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.8); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+  }
+  50% {
+    opacity: 0.9;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.8);
+  }
+}
+
+@keyframes fade-glow {
+  0%, 100% {
+    opacity: 0.8;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.7);
+  }
+}
+
+@keyframes slide-glow {
+  0%, 100% {
+    transform: translateX(0);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.7);
+  }
+}
+
+/* 🌌 ANIMATIONS GRADIENT - BACKGROUNDS ANIMÉS */
+
+@keyframes aurora-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes lava-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes wave-flow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes matrix-glow {
+  0%, 100% {
+    text-shadow: 0 0 10px #00ff00;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+  }
+  50% {
+    text-shadow: 0 0 20px #00ff41, 0 0 30px #39ff14;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+  }
+}
+
+@keyframes neon-pulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.4), inset 0 0 10px rgba(0, 255, 255, 0.1);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.8), inset 0 0 15px rgba(0, 255, 255, 0.3);
+  }
+}
+
+@keyframes pulse-blue {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    opacity: 0.85;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.7);
+  }
+}
+
+@keyframes sunset-glow {
+  0%, 100% {
+    background-position: 0% 50%;
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
+  }
+  50% {
+    background-position: 100% 50%;
+    box-shadow: 0 0 40px rgba(249, 115, 22, 0.8);
+  }
+}
+
+@keyframes forest-glow {
+  0%, 100% {
+    background-position: 0% 50%;
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+  }
+  50% {
+    background-position: 100% 50%;
+    box-shadow: 0 0 40px rgba(34, 197, 94, 0.7);
+  }
+}
+
+@keyframes galaxy-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.3), inset 0 0 20px rgba(168, 85, 247, 0.1);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 40px rgba(168, 85, 247, 0.7), inset 0 0 30px rgba(168, 85, 247, 0.3);
+  }
+}
+
+@keyframes neon-border {
+  0%, 100% {
+    border-color: rgba(0, 255, 255, 0.6);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  }
+  50% {
+    border-color: rgba(0, 255, 255, 1);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.8), inset 0 0 10px rgba(0, 255, 255, 0.2);
+  }
+}
+
+@keyframes code-glow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(122, 162, 247, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(122, 162, 247, 0.8), inset 0 0 15px rgba(122, 162, 247, 0.2);
+  }
+}
+
+/* 🎨 CLASSES TAILWIND POUR ANIMATIONS */
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out;
+  }
+  
+  .animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out;
+  }
+  
+  .animate-fade-in-down {
+    animation: fade-in-down 0.6s ease-out;
+  }
+  
+  .animate-slide-in-right {
+    animation: slide-in-right 0.5s ease-out;
+  }
+  
+  .animate-slide-in-left {
+    animation: slide-in-left 0.5s ease-out;
+  }
+  
+  .animate-pulse-fast {
+    animation: pulse-fast 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .animate-spin-slow {
+    animation: spin-slow 3s linear infinite;
+  }
+  
+  .animate-aurora {
+    background-size: 200% 200%;
+    animation: aurora-shift 6s ease infinite;
+  }
+  
+  .animate-lava {
+    background-size: 200% 200%;
+    animation: lava-flow 5s ease infinite;
+  }
+  
+  .animate-ocean {
+    animation: wave-flow 3s ease-in-out infinite;
+  }
+  
+  .animate-matrix {
+    animation: matrix-glow 2s ease-in-out infinite;
+  }
+  
+  .animate-neon {
+    animation: neon-pulse 2s ease-in-out infinite;
+  }
+  
+  .animate-pulse-blue {
+    animation: pulse-blue 2s ease-in-out infinite;
+  }
+  
+  .animate-sunset {
+    background-size: 200% 200%;
+    animation: sunset-glow 5s ease infinite;
+  }
+  
+  .animate-forest {
+    background-size: 200% 200%;
+    animation: forest-glow 5s ease infinite;
+  }
+  
+  .animate-galaxy {
+    animation: galaxy-glow 3s ease-in-out infinite;
+  }
+  
+  .animate-neon-border {
+    animation: neon-border 2s ease-in-out infinite;
+  }
+  
+  .animate-code-glow {
+    animation: code-glow 2s ease-in-out infinite;
+  }
+  
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  
+  .animate-fade-glow {
+    animation: fade-glow 2s ease-in-out infinite;
+  }
+  
+  .animate-slide-glow {
+    animation: slide-glow 2s ease-in-out infinite;
+  }
+  
+  /* 🌟 Glow effects */
+  .glow-cyan {
+    animation: glow-effect 2s ease-in-out infinite;
+  }
+  
+  .glow-green {
+    animation: glow-effect 2s ease-in-out infinite;
+    filter: hue-rotate(90deg);
+  }
+}
+

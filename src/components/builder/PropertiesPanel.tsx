@@ -32,7 +32,7 @@ export default function PropertiesPanel() {
 
           <div className="pt-4 border-t border-slate-700">
             <p className="text-slate-500 text-sm italic">
-              Éditeur de propriétés (En attente d'implémentation)
+              Modifiez le thème depuis la barre latérale gauche →
             </p>
           </div>
         </div>
@@ -40,3 +40,4 @@ export default function PropertiesPanel() {
     </aside>
   );
 }
+
