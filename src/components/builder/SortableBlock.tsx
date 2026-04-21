@@ -3,13 +3,13 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { Block } from '../../types.ts';
 import { GripVertical, Trash2 } from 'lucide-react';
-import { useBuilderStore } from '../../store/useBuilderStore';
-import HeaderBlock from '../blocks/HeaderBlock';
-import TerminalBlock from '../blocks/TerminalBlock';
-import TextBlock from '../blocks/TextBlock';
-import StackBlock from '../blocks/StackBlock';
-import TimelineBlock from '../blocks/TimelineBlock';
-import CodeSnippetBlock from '../blocks/CodeSnippetBlock';
+import { useBuilderStore } from '../../store/useBuilderStore.ts';
+import HeaderBlock from '../blocks/HeaderBlock.tsx';
+import TerminalBlock from '../blocks/TerminalBlock.tsx';
+import TextBlock from '../blocks/TextBlock.tsx';
+import StackBlock from '../blocks/StackBlock.tsx';
+import TimelineBlock from '../blocks/TimelineBlock.tsx';
+import CodeSnippetBlock from '../blocks/CodeSnippetBlock.tsx';
 
 // Mapping des noms d'animations aux classes Tailwind
 const ANIMATION_CLASS_MAP: Record<string, string> = {
@@ -38,7 +38,9 @@ const ANIMATION_CLASS_MAP: Record<string, string> = {
 
 export default function SortableBlock({ block }: { block: Block }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: block.id });
-  const { removeBlock, selectBlock, selectedBlockId } = useBuilderStore();
+  const removeBlock = useBuilderStore((s) => s.removeBlock);
+  const selectBlock = useBuilderStore((s) => s.selectBlock);
+  const selectedBlockId = useBuilderStore((s) => s.selectedBlockId);
 
   const style = {
     transform: CSS.Transform.toString(transform),

@@ -1,19 +1,19 @@
 // src/components/builder/Sidebar.tsx
 import { useState } from 'react';
-import { Terminal, Layout, Type, List, Cpu, Code, Palette, Sparkles, Trash2, GripVertical, Loader } from 'lucide-react';
-import { useBuilderStore } from '../../store/useBuilderStore';
-import type { BlockType } from '../../types.ts';
-import { getThemesByType } from '../../lib/themes.ts';
-import ThemeGallery from '../ThemeGallery.tsx';
+import { Terminal, Layout, Type, List, Cpu, Code, Sparkles, Trash2, GripVertical, Loader, X, ChevronDown } from 'lucide-react';
+import { useBuilderStore } from '../../store/useBuilderStore.ts';
+import type { BlockType, Block } from '../../types.ts';
 import { useSortable, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useDraggable } from '@dnd-kit/core';
 
-const ANIMATIONS = [
-  { group: 'Entrance', items: ['fade-in', 'fade-in-up', 'fade-in-down', 'slide-in-right', 'slide-in-left'] },
-  { group: 'Glow', items: ['pulse-glow', 'fade-glow', 'slide-glow', 'neon-pulse', 'pulse-blue', 'galaxy-glow', 'aurora-shift'] },
-  { group: 'Gradient', items: ['lava-flow', 'wave-flow', 'sunset-glow', 'forest-glow'] },
-  { group: 'Special', items: ['matrix-glow', 'neon-border', 'pulse-fast', 'spin-slow'] },
-];
+interface DraggableBlockItemProps {
+  block: Block;
+  index: number;
+  selectedBlockId: string | null;
+  onSelect: (id: string | null) => void;
+  onRemove: (id: string) => void;
+}
 
 const BLOCK_LIBRARY: { type: BlockType; label: string; icon: any; description: string }[] = [
   { type: 'header', label: '📋 En-tête', icon: Layout, description: 'Présentation du portfolio' },
@@ -25,7 +25,7 @@ const BLOCK_LIBRARY: { type: BlockType; label: string; icon: any; description: s
 ];
 
 // Component DraggableBlockItem
-function DraggableBlockItem({ block, index, selectedBlockId, onSelect, onRemove }: any) {
+function DraggableBlockItem({ block, index, selectedBlockId, onSelect, onRemove }: DraggableBlockItemProps) {
   const {
     attributes,
     listeners,
@@ -86,39 +86,55 @@ function DraggableBlockItem({ block, index, selectedBlockId, onSelect, onRemove 
   );
 }
 
+// Composant de catalogue Draggable (pour le Drag & Drop)
+function DraggableLibraryItem({ item, onAdd }: { item: any; onAdd: () => void }) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: `template-${item.type}`,
+    data: { type: 'new-block', blockType: item.type },
+  });
+
+  const style = transform ? {
+    transform: CSS.Translate.toString(transform),
+    zIndex: isDragging ? 100 : 'auto',
+    opacity: isDragging ? 0.8 : 1,
+  } : undefined;
+
+  const Icon = item.icon;
+
+  return (
+    <button
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      style={style}
+      onClick={onAdd}
+      className="flex flex-col items-center justify-center gap-2 p-3 rounded-xl bg-slate-800 hover:bg-indigo-600 transition-all group border border-slate-700 hover:border-indigo-400 shadow-sm"
+    >
+      <div className="p-2 bg-slate-900/50 rounded-lg group-hover:bg-black/20 transition-colors pointer-events-none">
+        <Icon size={20} className="text-indigo-400 group-hover:text-white" />
+      </div>
+      <span className="text-xs font-bold text-slate-300 group-hover:text-white text-center pointer-events-none">
+        {item.label.split(' ').slice(1).join(' ')}
+      </span>
+    </button>
+  );
+}
+
 export default function Sidebar() {
-  const [showGallery, setShowGallery] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
-  const [expandedSection, setExpandedSection] = useState<'add' | 'current' | 'style'>('add');
   const [loadingTemplate, setLoadingTemplate] = useState(false);
-  const [previewAnimation, setPreviewAnimation] = useState<string | null>(null);
+  const [isAddOpen, setIsAddOpen] = useState(true);
+  const [isLayersOpen, setIsLayersOpen] = useState(true);
   
   const addBlock = useBuilderStore((s) => s.addBlock);
   const selectBlock = useBuilderStore((s) => s.selectBlock);
   const removeBlock = useBuilderStore((s) => s.removeBlock);
   const selectedBlockId = useBuilderStore((s) => s.selectedBlockId);
   const blocks = useBuilderStore((s) => s.blocks);
-  const updateBlock = useBuilderStore((s) => s.updateBlock);
   const setBlocks = useBuilderStore((s) => s.setBlocks);
-
-  const selectedBlock = blocks.find((b) => b.id === selectedBlockId);
-  const availableThemes = selectedBlock ? getThemesByType(selectedBlock.type) : [];
-
-  const handleThemeChange = (themeId: string) => {
-    if (selectedBlock) {
-      updateBlock(selectedBlock.id, { theme: themeId });
-    }
-  };
-
-  const handleAnimationChange = (animationName: string) => {
-    if (selectedBlock) {
-      updateBlock(selectedBlock.id, { animation: animationName });
-    }
-  };
 
   const handleAddBlock = (type: BlockType) => {
     addBlock(type);
-    setExpandedSection('current');
   };
 
   const handleLoadTemplate = async (templateBlocks: any[]) => {
@@ -132,7 +148,6 @@ export default function Sidebar() {
       }));
       setBlocks(newBlocks);
       setShowTemplates(false);
-      setExpandedSection('current');
     } catch (error) {
       console.error('Erreur lors du chargement du template:', error);
     } finally {
@@ -144,97 +159,53 @@ export default function Sidebar() {
     <>
       <aside className="w-80 border-r border-builder-border bg-builder-panel flex flex-col gap-0 overflow-hidden">
         
-        {/* ===== SECTION 1: AJOUTER DES COMPOSANTS ===== */}
-        <div className="border-b border-slate-700">
+        {/* ===== SECTION 0: ACTIONS GLOBALES ===== */}
+        <div className="p-4 border-b border-slate-700 bg-slate-800/30">
           <button
-            onClick={() => setExpandedSection(expandedSection === 'add' ? 'current' : 'add')}
-            className="w-full px-4 py-3 bg-slate-800/50 hover:bg-slate-700/50 transition-colors flex items-center justify-between text-slate-200 font-semibold"
+            onClick={() => setShowTemplates(true)}
+            className="w-full py-2.5 px-4 rounded-lg bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-sm transition-all shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2"
           >
-            <span className="flex items-center gap-2">
+            📦 Explorer les Templates
+          </button>
+        </div>
+
+        {/* ===== SECTION 1: AJOUTER DES COMPOSANTS ===== */}
+        <div className="flex flex-col border-b border-slate-700 transition-all shrink-0">
+          <button 
+            onClick={() => setIsAddOpen(!isAddOpen)}
+            className={`w-full px-4 py-3 bg-slate-800/80 hover:bg-slate-700/80 flex items-center justify-between text-slate-200 font-semibold shrink-0 transition-colors ${isAddOpen ? 'border-b border-slate-700/50' : ''}`}
+          >
+            <div className="flex items-center gap-2">
               <Sparkles size={18} className="text-indigo-400" />
               Ajouter un composant
-            </span>
-            <span className={`transform transition-transform ${expandedSection === 'add' ? 'rotate-180' : ''}`}>
-              ▼
-            </span>
+            </div>
+            <ChevronDown size={16} className={`text-slate-400 transform transition-transform duration-200 ${isAddOpen ? 'rotate-180' : ''}`} />
           </button>
           
-          {expandedSection === 'add' && (
-            <div className="p-4 space-y-2 bg-slate-900/50 relative">
-              {BLOCK_LIBRARY.map((item) => (
-                <button
-                  key={item.type}
-                  onClick={() => handleAddBlock(item.type)}
-                  className="w-full text-left p-3 rounded-lg bg-slate-700 hover:bg-indigo-600 transition-all group"
-                >
-                  <div className="flex items-start gap-3">
-                    <span className="text-xl mt-1">{item.label.split(' ')[0]}</span>
-                    <div className="flex-1">
-                      <p className="font-semibold text-slate-100 group-hover:text-white">{item.label.split(' ').slice(1).join(' ')}</p>
-                      <p className="text-xs text-slate-400 group-hover:text-slate-300">{item.description}</p>
-                    </div>
-                    <span className="text-lg text-slate-400 group-hover:text-white">+</span>
-                  </div>
-                </button>
-              ))}
-              
-              {/* Template Loader Button */}
-              <button
-                onClick={() => setShowTemplates(!showTemplates)}
-                className="w-full text-left p-3 rounded-lg bg-linear-to-r from-purple-700 to-pink-700 hover:from-purple-600 hover:to-pink-600 transition-all group mt-4"
-              >
-                <div className="flex items-start gap-3">
-                  <span className="text-xl mt-1">📦</span>
-                  <div className="flex-1">
-                    <p className="font-semibold text-white">Utiliser un template</p>
-                    <p className="text-xs text-slate-200">Charger un portfolio pré-configuré</p>
-                  </div>
-                  <span className="text-lg text-white">→</span>
-                </div>
-              </button>
-
-              {/* Templates Preview - Dropdown avec scroll */}
-              {showTemplates && (
-                <div className="max-h-72 overflow-y-auto bg-slate-800 rounded border border-slate-600 space-y-1 p-2">
-                  {TEMPLATE_OPTIONS.map((tpl) => (
-                    <button
-                      key={tpl.id}
-                      onClick={() => handleLoadTemplate(tpl.blocks)}
-                      disabled={loadingTemplate}
-                      className="w-full text-left p-3 rounded bg-slate-700 hover:bg-slate-600 transition-all text-xs disabled:opacity-50"
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-slate-200 truncate">{tpl.icon} {tpl.name}</p>
-                          <p className="text-slate-400 text-xs truncate">{tpl.description}</p>
-                        </div>
-                        {loadingTemplate ? <Loader size={14} className="animate-spin shrink-0" /> : <span className="shrink-0">→</span>}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
+          {isAddOpen && (
+            <div className="p-3 grid grid-cols-2 gap-2 bg-slate-900/50">
+              {BLOCK_LIBRARY.map((item) => {
+                return <DraggableLibraryItem key={item.type} item={item} onAdd={() => handleAddBlock(item.type)} />;
+              })}
             </div>
           )}
         </div>
 
         {/* ===== SECTION 2: BLOCS ACTUELS (DRAG & DROP) ===== */}
-        <div className="border-b border-slate-700 flex-1 flex flex-col">
-          <button
-            onClick={() => setExpandedSection(expandedSection === 'current' ? 'add' : 'current')}
-            className="w-full px-4 py-3 bg-slate-800/50 hover:bg-slate-700/50 transition-colors flex items-center justify-between text-slate-200 font-semibold"
+        <div className={`flex flex-col bg-slate-900/50 transition-all ${isLayersOpen ? 'flex-1 min-h-0' : 'shrink-0'}`}>
+          <button 
+            onClick={() => setIsLayersOpen(!isLayersOpen)}
+            className={`w-full px-4 py-3 bg-slate-800/80 hover:bg-slate-700/80 flex items-center justify-between text-slate-200 font-semibold shrink-0 transition-colors ${isLayersOpen ? 'border-b border-slate-700/50' : ''}`}
           >
-            <span className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <GripVertical size={18} className="text-cyan-400" />
               Blocs actuels ({blocks.length})
-            </span>
-            <span className={`transform transition-transform ${expandedSection === 'current' ? 'rotate-180' : ''}`}>
-              ▼
-            </span>
+            </div>
+            <ChevronDown size={16} className={`text-slate-400 transform transition-transform duration-200 ${isLayersOpen ? 'rotate-180' : ''}`} />
           </button>
           
-          {expandedSection === 'current' && (
-            <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-slate-900/50">
+          {isLayersOpen && (
+            <div className="flex-1 overflow-y-auto p-4 pb-28 space-y-2">
               {blocks.length === 0 ? (
                 <p className="text-xs text-slate-500 italic text-center py-8">
                   Aucun bloc ajouté. Commencez par en ajouter un ! ⬆️
@@ -257,152 +228,65 @@ export default function Sidebar() {
           )}
         </div>
 
-        {/* ===== SECTION 3: ANIMATIONS & STYLES ===== */}
-        <div className="border-t border-slate-700">
-          <button
-            onClick={() => setExpandedSection(expandedSection === 'style' ? 'add' : 'style')}
-            className="w-full px-4 py-3 bg-slate-800/50 hover:bg-slate-700/50 transition-colors flex items-center justify-between text-slate-200 font-semibold"
-          >
-            <span className="flex items-center gap-2">
-              <Palette size={18} className="text-pink-400" />
-              Style & Animations
-            </span>
-            <span className={`transform transition-transform ${expandedSection === 'style' ? 'rotate-180' : ''}`}>
-              ▼
-            </span>
-          </button>
+      </aside>
 
-          {expandedSection === 'style' && (
-            <div className="p-4 space-y-3 bg-slate-900/50 max-h-96 overflow-y-auto">
-              {!selectedBlock ? (
-                <p className="text-xs text-slate-500 italic text-center py-3">
-                  Sélectionnez un bloc pour éditer
-                </p>
-              ) : (
-                <>
-                  {/* Animation Selector - Beautiful redesign */}
-                  <div>
-                    <label className="text-xs font-bold text-cyan-400 uppercase block mb-2">✨ Animations</label>
-                    
-                    {/* Grouped Animation Buttons */}
-                    <div className="space-y-2">
-                      {ANIMATIONS.map((group) => (
-                        <div key={group.group}>
-                          <p className="text-xs text-slate-500 font-semibold mb-1">{group.group}</p>
-                          <div className="grid grid-cols-2 gap-1">
-                            {group.items.map((anim) => (
-                              <button
-                                key={anim}
-                                onClick={() => {
-                                  handleAnimationChange(anim);
-                                  setPreviewAnimation(anim);
-                                }}
-                                className={`px-2 py-1.5 text-xs rounded font-semibold transition-all ${
-                                  selectedBlock.animation === anim
-                                    ? 'bg-cyan-600 text-white ring-2 ring-cyan-400'
-                                    : 'bg-slate-700 text-slate-300 hover:bg-slate-600 border border-slate-600'
-                                }`}
-                              >
-                                {anim}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
+      {/* ===== MODAL GALERIE DE TEMPLATES ===== */}
+      {showTemplates && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-6xl max-h-full flex flex-col shadow-2xl overflow-hidden animate-fade-in-up">
+            {/* Header de la Modale */}
+            <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-800/50 shrink-0">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">📦</span>
+                <div>
+                  <h2 className="text-xl font-bold text-white">Galerie de Templates</h2>
+                  <p className="text-sm text-slate-400">Démarrez avec une structure de portfolio professionnelle</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowTemplates(false)}
+                className="p-2 hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-white"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Grille de Templates */}
+            <div className="p-6 overflow-y-auto flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-slate-900/50">
+              {TEMPLATE_OPTIONS.map((tpl) => (
+                <div key={tpl.id} className="bg-slate-800 border border-slate-700 rounded-xl p-5 hover:border-purple-500/50 transition-all hover:shadow-lg hover:shadow-purple-500/20 flex flex-col">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-4xl">{tpl.icon}</span>
+                    <div>
+                      <h3 className="text-lg font-bold text-white">{tpl.name}</h3>
+                      <p className="text-sm text-slate-400">{tpl.description}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 flex-1">
+                    <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Composants inclus</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {tpl.blocks.map((b, i) => (
+                        <span key={i} className="px-2 py-1 bg-slate-900 text-slate-300 text-[10px] rounded border border-slate-700 font-mono">
+                          {b.type}
+                        </span>
                       ))}
                     </div>
-
-                    {/* Live Preview */}
-                    {(previewAnimation || selectedBlock.animation) && (
-                      <div className="mt-3 p-3 bg-linear-to-br from-cyan-900/30 to-blue-900/30 rounded border border-cyan-500/50">
-                        <p className="text-xs text-cyan-300 mb-2 font-semibold">▶️ Aperçu: <span className="font-mono text-cyan-200">{previewAnimation || selectedBlock.animation}</span></p>
-                        <div className="flex items-center justify-center py-6 bg-slate-900/50 rounded">
-                          <div
-                            className="w-14 h-14 bg-linear-to-br from-cyan-500 via-blue-500 to-purple-500 rounded-lg shadow-lg shadow-cyan-500/50"
-                            style={{
-                              animation: `${previewAnimation || selectedBlock.animation} 2s ease-in-out infinite`,
-                            }}
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Aucune animation button */}
-                    <button
-                      onClick={() => {
-                        handleAnimationChange('');
-                        setPreviewAnimation(null);
-                      }}
-                      className={`w-full mt-2 px-2 py-1.5 text-xs rounded font-semibold transition-all ${
-                        !selectedBlock.animation
-                          ? 'bg-slate-600 text-white ring-2 ring-slate-400'
-                          : 'bg-slate-700 text-slate-400 hover:bg-slate-600 border border-slate-600'
-                      }`}
-                    >
-                      ✕ Aucune animation
-                    </button>
                   </div>
 
-                  {/* Thème Selector - Compact */}
-                  {availableThemes.length > 0 && (
-                    <div>
-                      <label className="text-xs font-bold text-indigo-400 uppercase block mb-1">📌 Thème</label>
-                      <select
-                        value={selectedBlock.theme || ''}
-                        onChange={(e) => handleThemeChange(e.target.value)}
-                        className="w-full px-2 py-1.5 bg-slate-700 text-slate-200 rounded border border-slate-600 hover:border-indigo-500 transition-colors focus:outline-none text-xs"
-                      >
-                        <option value="">Aucun</option>
-                        {availableThemes.map((theme) => (
-                          <option key={theme.id} value={theme.id}>
-                            {theme.name}
-                          </option>
-                        ))}
-                      </select>
-                      
-                      {/* Minimal Theme Preview */}
-                      {selectedBlock.theme && (
-                        <div className="mt-2 p-2 bg-slate-800 rounded border border-slate-700 text-xs">
-                          {availableThemes
-                            .filter((t) => t.id === selectedBlock.theme)
-                            .map((theme) => (
-                              <div key={theme.id} className="space-y-1">
-                                <p className="text-slate-300"><span className="text-indigo-300 font-semibold">{theme.name}</span></p>
-                                <div className="flex gap-1">
-                                  {Object.entries(theme.colors).map(([key, value]) => (
-                                    <div
-                                      key={key}
-                                      className="flex-1 h-5 rounded border border-slate-600"
-                                      style={{
-                                        backgroundColor:
-                                          typeof value === 'string' && value.startsWith('#') ? value : '#333',
-                                      }}
-                                      title={`${key}`}
-                                    />
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Gallery Button */}
                   <button
-                    onClick={() => setShowGallery(true)}
-                    className="w-full px-3 py-1.5 bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded text-xs font-semibold transition-all"
+                    onClick={() => handleLoadTemplate(tpl.blocks)}
+                    disabled={loadingTemplate}
+                    className="w-full mt-6 py-2.5 bg-slate-700 hover:bg-purple-600 text-white rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 group"
                   >
-                    👀 Voir galerie complète
+                    {loadingTemplate ? <Loader size={16} className="animate-spin" /> : 'Utiliser ce template'}
                   </button>
-                </>
-              )}
+                </div>
+              ))}
             </div>
-          )}
+          </div>
         </div>
-
-      </aside>
-    
-    <ThemeGallery isOpen={showGallery} onClose={() => setShowGallery(false)} />
+      )}
     </>
   );
 }
@@ -1689,6 +1573,102 @@ const TEMPLATE_OPTIONS = [
       },
     ],
   },
+  {
+    id: 'retro-80s',
+    name: 'Retrowave 1984',
+    description: 'Ambiance Synthwave & Néon',
+    icon: '🌴',
+    blocks: [
+      {
+        type: 'header',
+        content: {
+          name: 'Tommy Vercetti',
+          role: 'Cyber-Architect',
+          email: 'tommy@vice-city.net',
+          github: 'github.com/tommy-retro',
+        },
+        styles: {},
+        theme: 'header-synthwave',
+        animation: 'float',
+      },
+      {
+        type: 'terminal',
+        content: {
+          lines: [
+            { label: 'C:\\> ', value: 'LOAD "CYBER_CORE",8,1' },
+            { label: 'SEARCHING...', value: 'FOUND CYBER_CORE' },
+            { label: 'LOADING...', value: 'READY.' },
+            { label: 'C:\\> ', value: 'RUN' },
+          ],
+        },
+        styles: {},
+        theme: 'terminal-synthwave',
+        animation: 'neon-flicker',
+      },
+      {
+        type: 'stack',
+        content: {
+          skills: [
+            { name: 'C++ & Low Level', level: 99 },
+            { name: 'Assembly x86', level: 90 },
+            { name: 'Network Protocols', level: 95 },
+          ],
+        },
+        styles: {},
+        theme: 'stack-synthwave',
+        animation: 'zoom-in',
+      },
+    ],
+  },
+  {
+    id: 'github-standard',
+    name: 'GitHub Profile',
+    description: 'Clean, clair, et rassurant',
+    icon: '🐈‍⬛',
+    blocks: [
+      {
+        type: 'header',
+        content: {
+          name: 'Linus OpenSource',
+          role: 'Open Source Maintainer',
+          email: 'linus@oss-foundation.org',
+          github: 'github.com/linus-oss',
+        },
+        styles: {},
+        theme: 'header-github-light',
+        animation: 'fade-in-down',
+      },
+      {
+        type: 'text',
+        content: {
+          text: 'Développeur Open Source à plein temps. Je maintiens plusieurs librairies TypeScript majeures utilisées par des millions de développeurs chaque mois. Passionné par l\'accessibilité, le typage strict et la DX (Developer Experience).',
+        },
+        styles: {},
+        theme: 'text-github',
+        animation: 'fade-in',
+      },
+      {
+        type: 'code-snippet',
+        content: {
+          title: 'src/core/index.ts',
+          code: 'export function createRouter<T extends Routes>(routes: T): Router<T> {\n  return new RouterImpl(routes);\n}\n\n// Type-safe routing\nconst router = createRouter({\n  home: "/",\n  user: "/users/:id"\n});',
+          language: 'typescript',
+        },
+        styles: {},
+        theme: 'code-github-dark',
+        animation: 'fade-in-up',
+      },
+      {
+        type: 'timeline',
+        content: {
+          events: [
+            { year: '2024', title: 'Core Team Member', company: 'TypeScript Foundation' },
+            { year: '2020', title: 'Senior Software Engineer', company: 'Vercel' },
+          ],
+        },
+        styles: {},
+        theme: 'timeline-github',
+      },
+    ],
+  }
 ];
-
-

@@ -1,7 +1,7 @@
 // src/components/blocks/HeaderBlock.tsx
 import { Code, Mail } from 'lucide-react';
 import type { Block } from '../../types.ts';
-import { useBuilderStore } from '../../store/useBuilderStore';
+import { useBuilderStore } from '../../store/useBuilderStore.ts';
 import { getThemeById } from '../../lib/themes.ts';
 
 export default function HeaderBlock({ block }: { block: Block }) {
@@ -14,7 +14,7 @@ export default function HeaderBlock({ block }: { block: Block }) {
     role = "Fullstack Developer", 
     email = "contact@stack.dev",
     github = "github.com/username" 
-  } = block.content;
+  } = block.content || {};
 
   const handleBlur = (field: string, value: string) => {
     updateBlock(block.id, {
@@ -22,11 +22,11 @@ export default function HeaderBlock({ block }: { block: Block }) {
     });
   };
 
-  const accentColor = theme?.colors?.accent || '#818cf8';
+  const accentColor = block.styles?.accentColor || theme?.colors?.accent || '#818cf8';
   const textColor = theme?.colors?.text || '#e2e8f0';
 
   return (
-    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+    <div className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-all ${theme?.customClass || 'p-2'}`}>
       <div>
         <h1 
           contentEditable

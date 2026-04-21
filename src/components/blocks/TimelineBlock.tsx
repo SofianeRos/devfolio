@@ -1,5 +1,5 @@
 import type { Block } from '../../types.ts';
-import { useBuilderStore } from '../../store/useBuilderStore';
+import { useBuilderStore } from '../../store/useBuilderStore.ts';
 import { getThemeById } from '../../lib/themes.ts';
 import { Plus, Trash2 } from 'lucide-react';
 
@@ -28,11 +28,11 @@ export default function TimelineBlock({ block }: { block: Block }) {
     updateBlock(block.id, { content: { ...block.content, events: newEvents } });
   };
 
-  const accentColor = theme?.colors?.accent || '#6366f1';
+  const accentColor = block.styles?.accentColor || theme?.colors?.accent || '#6366f1';
   const textColor = theme?.colors?.text || '#cbd5e1';
 
   return (
-    <div className="w-full space-y-6">
+    <div className={`w-full space-y-6 transition-all ${theme?.customClass || 'p-2'}`}>
       {events.map((event, index) => (
         <div key={index} className="flex gap-4">
           <div className="flex flex-col items-center">

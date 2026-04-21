@@ -1,5 +1,5 @@
 import type { Block } from '../../types.ts';
-import { useBuilderStore } from '../../store/useBuilderStore';
+import { useBuilderStore } from '../../store/useBuilderStore.ts';
 import { getThemeById } from '../../lib/themes.ts';
 
 export default function TextBlock({ block }: { block: Block }) {
@@ -16,7 +16,7 @@ export default function TextBlock({ block }: { block: Block }) {
   const textColor = theme?.colors?.text || '#cbd5e1';
 
   return (
-    <div className="w-full">
+    <div className={`w-full transition-all ${theme?.customClass || 'p-2'}`}>
       <p
         contentEditable
         suppressContentEditableWarning

@@ -9,6 +9,7 @@ import {
   TERMINAL_THEMES,
   HEADER_THEMES,
   CODE_THEMES,
+  TEXT_THEMES,
   TIMELINE_THEMES,
   STACK_THEMES,
 } from './themes.ts';
@@ -17,6 +18,7 @@ import {
 export const THEME_INDEX = {
   terminal: TERMINAL_THEMES,
   header: HEADER_THEMES,
+  text: TEXT_THEMES,
   code: CODE_THEMES,
   timeline: TIMELINE_THEMES,
   stack: STACK_THEMES,
@@ -24,10 +26,11 @@ export const THEME_INDEX = {
 
 // 📊 STATISTIQUES THÈMES
 export const THEME_STATS = {
-  total: TERMINAL_THEMES.length + HEADER_THEMES.length + CODE_THEMES.length + TIMELINE_THEMES.length + STACK_THEMES.length,
+  total: TERMINAL_THEMES.length + HEADER_THEMES.length + CODE_THEMES.length + TIMELINE_THEMES.length + STACK_THEMES.length + TEXT_THEMES.length,
   byType: {
     terminal: TERMINAL_THEMES.length,
     header: HEADER_THEMES.length,
+    text: TEXT_THEMES.length,
     code: CODE_THEMES.length,
     timeline: TIMELINE_THEMES.length,
     stack: STACK_THEMES.length,
@@ -42,6 +45,7 @@ export const ANIMATION_INDEX = {
     { name: 'fade-in-down', description: 'Fondu vers le bas', duration: '0.6s' },
     { name: 'slide-in-right', description: 'Glissade de la gauche', duration: '0.5s' },
     { name: 'slide-in-left', description: 'Glissade de la droite', duration: '0.5s' },
+    { name: 'zoom-in', description: 'Zoom d\'apparition', duration: '0.5s' },
   ],
   glow: [
     { name: 'pulse-glow', description: 'Pulsation avec glow indigo', duration: '2s', category: 'glow' },
@@ -64,6 +68,8 @@ export const ANIMATION_INDEX = {
     { name: 'neon-border', description: 'Border néon clignotante', duration: '2s', category: 'special' },
     { name: 'pulse-fast', description: 'Pulsation rapide', duration: '1.5s', category: 'special' },
     { name: 'spin-slow', description: 'Rotation lente', duration: '3s', category: 'special' },
+    { name: 'float', description: 'Flottaison 3D', duration: '4s', category: 'special' },
+    { name: 'neon-flicker', description: 'Grésillement Néon', duration: '3s', category: 'special' },
   ],
 };
 

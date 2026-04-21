@@ -157,6 +157,55 @@ export const TERMINAL_THEMES: Theme[] = [
     shadow: 'shadow-2xl shadow-green-500/30',
     customClass: 'bg-gradient-to-br from-green-950 to-emerald-900 border-2 border-green-600 animate-forest',
   },
+  // OS & IDE
+  {
+    id: 'terminal-ubuntu',
+    name: 'Ubuntu',
+    description: 'Terminal classique Linux Ubuntu',
+    category: 'terminal',
+    colors: { bg: '#300a24', text: '#ffffff', accent: '#eeeeee', secondary: '#4e9a06' },
+    animation: 'fade-in-up',
+    borderStyle: 'border border-[#595959]',
+    borderRadius: 'rounded-xl',
+    shadow: 'shadow-2xl',
+    customClass: 'bg-[#300a24] border border-[#595959]',
+  },
+  {
+    id: 'terminal-powershell',
+    name: 'PowerShell',
+    description: 'Style Windows PowerShell',
+    category: 'terminal',
+    colors: { bg: '#012456', text: '#eeedf0', accent: '#eeedf0', secondary: '#f9f1a5' },
+    animation: 'fade-in',
+    borderStyle: 'border border-blue-800',
+    borderRadius: 'rounded-none',
+    shadow: 'shadow-md',
+    customClass: 'bg-[#012456] border border-blue-800 font-mono',
+  },
+  {
+    id: 'terminal-synthwave',
+    name: 'Synthwave 84',
+    description: 'Ambiance Retrowave/Outrun',
+    category: 'terminal',
+    colors: { bg: '#2b213a', text: '#f92aad', accent: '#f8f8f2', secondary: '#36f9f6' },
+    animation: 'float',
+    borderStyle: 'border-2 border-pink-500',
+    borderRadius: 'rounded-lg',
+    shadow: 'shadow-[0_0_20px_rgba(249,42,173,0.5)]',
+    customClass: 'bg-[#2b213a] border-2 border-pink-500 text-shadow-sm',
+  },
+  {
+    id: 'terminal-solarized-light',
+    name: 'Solarized Light',
+    description: 'Thème clair pour la lisibilité',
+    category: 'terminal',
+    colors: { bg: '#fdf6e3', text: '#657b83', accent: '#2aa198', secondary: '#859900' },
+    animation: 'zoom-in',
+    borderStyle: 'border border-[#eee8d5]',
+    borderRadius: 'rounded-md',
+    shadow: 'shadow-lg',
+    customClass: 'bg-[#fdf6e3] border border-[#eee8d5]',
+  },
 ];
 
 
@@ -298,6 +347,65 @@ export const HEADER_THEMES: Theme[] = [
     shadow: 'shadow-2xl shadow-purple-500/20',
     customClass: 'bg-gradient-to-r from-purple-900 via-indigo-800 to-purple-900 rounded-xl shadow-2xl p-6 animate-galaxy',
   },
+  // --- NOUVEAUX STYLES DIVERS ---
+  {
+    id: 'header-brutalism', name: 'Brutalism', description: 'Design brut et marqué', category: 'header',
+    colors: { bg: '#fde047', text: '#000000', accent: '#000000' },
+    customClass: 'bg-yellow-300 text-black border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none p-6 font-bold',
+    rawCss: 'background-color: #fde047 !important; color: #000 !important; border: 4px solid #000 !important; box-shadow: 8px 8px 0px 0px rgba(0,0,0,1) !important; border-radius: 0 !important; padding: 1.5rem !important; font-weight: bold;',
+  },
+  {
+    id: 'header-glass', name: 'Glassmorphism', description: 'Verre dépoli', category: 'header',
+    colors: { bg: 'rgba(255,255,255,0.05)', text: '#ffffff', accent: '#a5b4fc' },
+    customClass: 'bg-white/5 backdrop-blur-lg border border-white/10 shadow-2xl rounded-2xl p-6 text-white',
+    rawCss: 'background-color: rgba(255,255,255,0.05) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1) !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important; border-radius: 1.5rem !important; padding: 1.5rem !important; color: #fff !important;',
+  },
+  {
+    id: 'header-neumorphism', name: 'Neumorphism', description: 'Soft UI', category: 'header',
+    colors: { bg: '#1e293b', text: '#e2e8f0', accent: '#38bdf8' },
+    customClass: 'bg-[#1e293b] rounded-2xl shadow-[8px_8px_16px_#131a25,-8px_-8px_16px_#293851] p-6 text-slate-200 border-none',
+    rawCss: 'background-color: #1e293b !important; border-radius: 1.5rem !important; box-shadow: 8px 8px 16px #131a25, -8px -8px 16px #293851 !important; padding: 1.5rem !important; color: #e2e8f0 !important; border: none !important;',
+  },
+  {
+    id: 'header-win95', name: 'Windows 95', description: 'Retro OS', category: 'header',
+    colors: { bg: '#c0c0c0', text: '#000000', accent: '#000080' },
+    customClass: 'bg-[#c0c0c0] text-black border-t-2 border-l-2 border-white border-b-2 border-r-2 border-b-black border-r-black p-6 rounded-none font-mono',
+    rawCss: 'background-color: #c0c0c0 !important; color: #000 !important; border-top: 2px solid #fff !important; border-left: 2px solid #fff !important; border-bottom: 2px solid #000 !important; border-right: 2px solid #000 !important; padding: 1.5rem !important; border-radius: 0 !important; font-family: "Courier New", Courier, monospace !important;',
+  },
+  {
+    id: 'header-paper', name: 'Notepad', description: 'Style papier', category: 'header',
+    colors: { bg: '#fdf6e3', text: '#2c3e50', accent: '#cb4b16' },
+    customClass: 'bg-[#fdf6e3] text-[#2c3e50] border-l-4 border-[#cb4b16] shadow-md p-6 rounded-r-lg font-serif',
+    rawCss: 'background-color: #fdf6e3 !important; color: #2c3e50 !important; border-left: 4px solid #cb4b16 !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; padding: 1.5rem !important; border-radius: 0 0.5rem 0.5rem 0 !important; font-family: Georgia, serif !important;',
+  },
+  {
+    id: 'header-catppuccin', name: 'Catppuccin Mocha', description: 'Pastel chaleureux', category: 'header',
+    colors: { bg: '#1e1e2e', text: '#cdd6f4', accent: '#cba6f7', secondary: '#89b4fa' },
+    animation: 'float',
+    customClass: 'bg-[#1e1e2e] rounded-xl shadow-xl p-6 text-[#cdd6f4] border border-[#313244]',
+    rawCss: 'background-color: #1e1e2e !important; color: #cdd6f4 !important; border-radius: 0.75rem !important; padding: 1.5rem !important; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1) !important; border: 1px solid #313244 !important;',
+  },
+  {
+    id: 'header-synthwave', name: 'Synthwave', description: 'Glow Retrowave', category: 'header',
+    colors: { bg: 'gradient', text: '#f8f8f2', accent: '#f92aad', secondary: '#36f9f6' },
+    animation: 'neon-flicker',
+    customClass: 'bg-gradient-to-r from-[#2b213a] to-[#241b2f] border-b-4 border-pink-500 rounded-t-xl p-6 shadow-[0_5px_30px_rgba(249,42,173,0.3)]',
+    rawCss: 'background: linear-gradient(to right, #2b213a, #241b2f) !important; border-bottom: 4px solid #f92aad !important; padding: 1.5rem !important; box-shadow: 0 5px 30px rgba(249,42,173,0.3) !important; border-radius: 0.75rem 0.75rem 0 0 !important;',
+  },
+  {
+    id: 'header-github-light', name: 'GitHub Light', description: 'Clair et familier', category: 'header',
+    colors: { bg: '#ffffff', text: '#24292f', accent: '#0969da', secondary: '#57606a' },
+    animation: 'fade-in',
+    customClass: 'bg-white border border-[#d0d7de] rounded-md p-6 text-[#24292f]',
+    rawCss: 'background-color: #ffffff !important; color: #24292f !important; border: 1px solid #d0d7de !important; border-radius: 0.375rem !important; padding: 1.5rem !important;',
+  },
+  {
+    id: 'header-rose-pine', name: 'Rosé Pine', description: 'Aube romantique', category: 'header',
+    colors: { bg: '#191724', text: '#e0def4', accent: '#ebbcba', secondary: '#c4a7e7' },
+    animation: 'zoom-in',
+    customClass: 'bg-[#191724] rounded-2xl shadow-xl p-6 text-[#e0def4]',
+    rawCss: 'background-color: #191724 !important; color: #e0def4 !important; border-radius: 1rem !important; padding: 1.5rem !important; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1) !important;',
+  },
 ];
 
 
@@ -413,6 +521,42 @@ export const CODE_THEMES: Theme[] = [
     shadow: 'shadow-2xl shadow-lime-500/40',
     customClass: 'bg-[#141b24] border-2 border-lime-400/70 hover:border-lime-400 transition-all animate-neon',
   },
+  {
+    id: 'code-synthwave',
+    name: 'Synthwave 84',
+    description: 'Code Retrowave',
+    category: 'code-snippet',
+    colors: { bg: '#262335', text: '#f8f8f2', accent: '#f92aad', secondary: '#36f9f6' },
+    animation: 'neon-flicker',
+    borderStyle: 'border border-pink-500/50',
+    borderRadius: 'rounded-lg',
+    shadow: 'shadow-[0_0_15px_rgba(249,42,173,0.3)]',
+    customClass: 'bg-[#262335] border border-pink-500/50 hover:shadow-[0_0_25px_rgba(249,42,173,0.5)] transition-all',
+  },
+  {
+    id: 'code-github-dark',
+    name: 'GitHub Dark',
+    description: 'Le classique de GitHub',
+    category: 'code-snippet',
+    colors: { bg: '#0d1117', text: '#c9d1d9', accent: '#58a6ff', secondary: '#8b949e' },
+    animation: 'fade-in',
+    borderStyle: 'border border-[#30363d]',
+    borderRadius: 'rounded-md',
+    shadow: 'shadow-sm',
+    customClass: 'bg-[#0d1117] border border-[#30363d] rounded-md transition-all',
+  },
+  {
+    id: 'code-night-owl',
+    name: 'Night Owl',
+    description: 'Sombre et optimisé',
+    category: 'code-snippet',
+    colors: { bg: '#011627', text: '#d6deeb', accent: '#82aaff', secondary: '#c792ea' },
+    animation: 'float',
+    borderStyle: 'border border-[#1d3b53]',
+    borderRadius: 'rounded-xl',
+    shadow: 'shadow-2xl shadow-blue-900/20',
+    customClass: 'bg-[#011627] border border-[#1d3b53] hover:border-blue-500/50 transition-all',
+  },
 ];
 
 
@@ -491,6 +635,58 @@ export const TIMELINE_THEMES: Theme[] = [
     borderRadius: 'rounded-lg',
     shadow: 'shadow-lg shadow-indigo-500/20',
     customClass: 'border-l-4 border-indigo-500 pl-6 hover:shadow-lg hover:shadow-indigo-500/40 transition-shadow',
+  },
+  // --- NOUVEAUX STYLES DIVERS ---
+  {
+    id: 'timeline-brutalism', name: 'Brutalism', description: 'Design brut et marqué', category: 'timeline',
+    colors: { bg: '#fde047', text: '#000000', accent: '#000000' },
+    customClass: 'bg-yellow-300 text-black border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none p-6 font-bold',
+    rawCss: 'background-color: #fde047 !important; color: #000 !important; border: 4px solid #000 !important; box-shadow: 8px 8px 0px 0px rgba(0,0,0,1) !important; border-radius: 0 !important; padding: 1.5rem !important; font-weight: bold;',
+  },
+  {
+    id: 'timeline-glass', name: 'Glassmorphism', description: 'Verre dépoli', category: 'timeline',
+    colors: { bg: 'rgba(255,255,255,0.05)', text: '#ffffff', accent: '#a5b4fc' },
+    customClass: 'bg-white/5 backdrop-blur-lg border border-white/10 shadow-2xl rounded-2xl p-6 text-white',
+    rawCss: 'background-color: rgba(255,255,255,0.05) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1) !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important; border-radius: 1.5rem !important; padding: 1.5rem !important; color: #fff !important;',
+  },
+  {
+    id: 'timeline-neumorphism', name: 'Neumorphism', description: 'Soft UI', category: 'timeline',
+    colors: { bg: '#1e293b', text: '#e2e8f0', accent: '#38bdf8' },
+    customClass: 'bg-[#1e293b] rounded-2xl shadow-[8px_8px_16px_#131a25,-8px_-8px_16px_#293851] p-6 text-slate-200 border-none',
+    rawCss: 'background-color: #1e293b !important; border-radius: 1.5rem !important; box-shadow: 8px 8px 16px #131a25, -8px -8px 16px #293851 !important; padding: 1.5rem !important; color: #e2e8f0 !important; border: none !important;',
+  },
+  {
+    id: 'timeline-win95', name: 'Windows 95', description: 'Retro OS', category: 'timeline',
+    colors: { bg: '#c0c0c0', text: '#000000', accent: '#000080' },
+    customClass: 'bg-[#c0c0c0] text-black border-t-2 border-l-2 border-white border-b-2 border-r-2 border-b-black border-r-black p-6 rounded-none font-mono',
+    rawCss: 'background-color: #c0c0c0 !important; color: #000 !important; border-top: 2px solid #fff !important; border-left: 2px solid #fff !important; border-bottom: 2px solid #000 !important; border-right: 2px solid #000 !important; padding: 1.5rem !important; border-radius: 0 !important; font-family: "Courier New", Courier, monospace !important;',
+  },
+  {
+    id: 'timeline-paper', name: 'Notepad', description: 'Style papier', category: 'timeline',
+    colors: { bg: '#fdf6e3', text: '#2c3e50', accent: '#cb4b16' },
+    customClass: 'bg-[#fdf6e3] text-[#2c3e50] border-l-4 border-[#cb4b16] shadow-md p-6 rounded-r-lg font-serif',
+    rawCss: 'background-color: #fdf6e3 !important; color: #2c3e50 !important; border-left: 4px solid #cb4b16 !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; padding: 1.5rem !important; border-radius: 0 0.5rem 0.5rem 0 !important; font-family: Georgia, serif !important;',
+  },
+  {
+    id: 'timeline-catppuccin', name: 'Catppuccin Mocha', description: 'Pastel chaleureux', category: 'timeline',
+    colors: { bg: '#1e1e2e', text: '#cdd6f4', accent: '#cba6f7', secondary: '#89b4fa' },
+    animation: 'fade-in-up',
+    customClass: 'bg-[#1e1e2e] rounded-xl shadow-xl p-6 text-[#cdd6f4] border border-[#313244]',
+    rawCss: 'background-color: #1e1e2e !important; color: #cdd6f4 !important; border-radius: 0.75rem !important; padding: 1.5rem !important; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1) !important; border: 1px solid #313244 !important;',
+  },
+  {
+    id: 'timeline-synthwave', name: 'Synthwave', description: 'Glow Retrowave', category: 'timeline',
+    colors: { bg: '#2b213a', text: '#f8f8f2', accent: '#36f9f6', secondary: '#f92aad' },
+    animation: 'neon-pulse',
+    customClass: 'bg-[#2b213a] border-l-4 border-cyan-400 p-6 shadow-[0_0_15px_rgba(54,249,246,0.3)]',
+    rawCss: 'background-color: #2b213a !important; color: #f8f8f2 !important; border-left: 4px solid #36f9f6 !important; padding: 1.5rem !important; box-shadow: 0 0 15px rgba(54,249,246,0.3) !important;',
+  },
+  {
+    id: 'timeline-github', name: 'GitHub Default', description: 'Design clair', category: 'timeline',
+    colors: { bg: '#ffffff', text: '#24292f', accent: '#0969da', secondary: '#57606a' },
+    animation: 'fade-in',
+    customClass: 'bg-white border-l-4 border-[#0969da] p-6 shadow-sm',
+    rawCss: 'background-color: #ffffff !important; color: #24292f !important; border-left: 4px solid #0969da !important; padding: 1.5rem !important; box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;',
   },
 ];
 
@@ -594,6 +790,129 @@ export const STACK_THEMES: Theme[] = [
     shadow: 'shadow-xl shadow-green-500/30',
     customClass: 'inline-block px-4 py-2 bg-gradient-to-r from-green-700 to-emerald-600 rounded-full border-2 border-green-600 hover:shadow-xl hover:shadow-green-500/50 transition-all animate-forest',
   },
+  // --- NOUVEAUX STYLES DIVERS ---
+  {
+    id: 'stack-brutalism', name: 'Brutalism', description: 'Design brut et marqué', category: 'stack',
+    colors: { bg: '#fde047', text: '#000000', accent: '#000000' },
+    customClass: 'bg-yellow-300 text-black border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none p-6 font-bold',
+    rawCss: 'background-color: #fde047 !important; color: #000 !important; border: 4px solid #000 !important; box-shadow: 8px 8px 0px 0px rgba(0,0,0,1) !important; border-radius: 0 !important; padding: 1.5rem !important; font-weight: bold;',
+  },
+  {
+    id: 'stack-glass', name: 'Glassmorphism', description: 'Verre dépoli', category: 'stack',
+    colors: { bg: 'rgba(255,255,255,0.05)', text: '#ffffff', accent: '#a5b4fc' },
+    customClass: 'bg-white/5 backdrop-blur-lg border border-white/10 shadow-2xl rounded-2xl p-6 text-white',
+    rawCss: 'background-color: rgba(255,255,255,0.05) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1) !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important; border-radius: 1.5rem !important; padding: 1.5rem !important; color: #fff !important;',
+  },
+  {
+    id: 'stack-neumorphism', name: 'Neumorphism', description: 'Soft UI', category: 'stack',
+    colors: { bg: '#1e293b', text: '#e2e8f0', accent: '#38bdf8' },
+    customClass: 'bg-[#1e293b] rounded-2xl shadow-[8px_8px_16px_#131a25,-8px_-8px_16px_#293851] p-6 text-slate-200 border-none',
+    rawCss: 'background-color: #1e293b !important; border-radius: 1.5rem !important; box-shadow: 8px 8px 16px #131a25, -8px -8px 16px #293851 !important; padding: 1.5rem !important; color: #e2e8f0 !important; border: none !important;',
+  },
+  {
+    id: 'stack-win95', name: 'Windows 95', description: 'Retro OS', category: 'stack',
+    colors: { bg: '#c0c0c0', text: '#000000', accent: '#000080' },
+    customClass: 'bg-[#c0c0c0] text-black border-t-2 border-l-2 border-white border-b-2 border-r-2 border-b-black border-r-black p-6 rounded-none font-mono',
+    rawCss: 'background-color: #c0c0c0 !important; color: #000 !important; border-top: 2px solid #fff !important; border-left: 2px solid #fff !important; border-bottom: 2px solid #000 !important; border-right: 2px solid #000 !important; padding: 1.5rem !important; border-radius: 0 !important; font-family: "Courier New", Courier, monospace !important;',
+  },
+  {
+    id: 'stack-paper', name: 'Notepad', description: 'Style papier', category: 'stack',
+    colors: { bg: '#fdf6e3', text: '#2c3e50', accent: '#cb4b16' },
+    customClass: 'bg-[#fdf6e3] text-[#2c3e50] border-l-4 border-[#cb4b16] shadow-md p-6 rounded-r-lg font-serif',
+    rawCss: 'background-color: #fdf6e3 !important; color: #2c3e50 !important; border-left: 4px solid #cb4b16 !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; padding: 1.5rem !important; border-radius: 0 0.5rem 0.5rem 0 !important; font-family: Georgia, serif !important;',
+  },
+  {
+    id: 'stack-catppuccin', name: 'Catppuccin Mocha', description: 'Pastel chaleureux', category: 'stack',
+    colors: { bg: '#1e1e2e', text: '#cdd6f4', accent: '#cba6f7', secondary: '#89b4fa' },
+    animation: 'zoom-in',
+    customClass: 'bg-[#1e1e2e] rounded-xl shadow-xl p-6 text-[#cdd6f4] border border-[#313244]',
+    rawCss: 'background-color: #1e1e2e !important; color: #cdd6f4 !important; border-radius: 0.75rem !important; padding: 1.5rem !important; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1) !important; border: 1px solid #313244 !important;',
+  },
+  {
+    id: 'stack-synthwave', name: 'Synthwave', description: 'Glow Retrowave', category: 'stack',
+    colors: { bg: '#2b213a', text: '#f8f8f2', accent: '#f92aad', secondary: '#36f9f6' },
+    animation: 'float',
+    customClass: 'bg-[#2b213a] border border-pink-500/50 p-6 rounded-lg shadow-[0_0_20px_rgba(249,42,173,0.2)]',
+    rawCss: 'background-color: #2b213a !important; color: #f8f8f2 !important; border: 1px solid rgba(249,42,173,0.5) !important; border-radius: 0.5rem !important; padding: 1.5rem !important; box-shadow: 0 0 20px rgba(249,42,173,0.2) !important;',
+  },
+  {
+    id: 'stack-minimal-light', name: 'Minimal Light', description: 'Clair et épuré', category: 'stack',
+    colors: { bg: '#f8fafc', text: '#334155', accent: '#3b82f6', secondary: '#94a3b8' },
+    animation: 'fade-in',
+    customClass: 'bg-[#f8fafc] border border-slate-200 rounded-lg p-6 text-slate-700',
+    rawCss: 'background-color: #f8fafc !important; color: #334155 !important; border: 1px solid #e2e8f0 !important; border-radius: 0.5rem !important; padding: 1.5rem !important;',
+  },
+  {
+    id: 'stack-rose-pine', name: 'Rosé Pine', description: 'Aube romantique', category: 'stack',
+    colors: { bg: '#191724', text: '#e0def4', accent: '#31748f', secondary: '#ebbcba' },
+    animation: 'slide-in-right',
+    customClass: 'bg-[#191724] rounded-2xl shadow-xl p-6 text-[#e0def4]',
+    rawCss: 'background-color: #191724 !important; color: #e0def4 !important; border-radius: 1rem !important; padding: 1.5rem !important; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1) !important;',
+  },
+];
+
+// ============================================
+// THÈMES POUR TEXTE (Nouveau !)
+// ============================================
+export const TEXT_THEMES: Theme[] = [
+  {
+    id: 'text-brutalism', name: 'Brutalism', description: 'Design brut et marqué', category: 'text',
+    colors: { bg: '#fde047', text: '#000000', accent: '#000000' },
+    customClass: 'bg-yellow-300 text-black border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none p-6 font-bold',
+    rawCss: 'background-color: #fde047 !important; color: #000 !important; border: 4px solid #000 !important; box-shadow: 8px 8px 0px 0px rgba(0,0,0,1) !important; border-radius: 0 !important; padding: 1.5rem !important; font-weight: bold;',
+  },
+  {
+    id: 'text-glass', name: 'Glassmorphism', description: 'Verre dépoli', category: 'text',
+    colors: { bg: 'rgba(255,255,255,0.05)', text: '#ffffff', accent: '#a5b4fc' },
+    customClass: 'bg-white/5 backdrop-blur-lg border border-white/10 shadow-2xl rounded-2xl p-6 text-white',
+    rawCss: 'background-color: rgba(255,255,255,0.05) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1) !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important; border-radius: 1.5rem !important; padding: 1.5rem !important; color: #fff !important;',
+  },
+  {
+    id: 'text-neumorphism', name: 'Neumorphism', description: 'Soft UI', category: 'text',
+    colors: { bg: '#1e293b', text: '#e2e8f0', accent: '#38bdf8' },
+    customClass: 'bg-[#1e293b] rounded-2xl shadow-[8px_8px_16px_#131a25,-8px_-8px_16px_#293851] p-6 text-slate-200 border-none',
+    rawCss: 'background-color: #1e293b !important; border-radius: 1.5rem !important; box-shadow: 8px 8px 16px #131a25, -8px -8px 16px #293851 !important; padding: 1.5rem !important; color: #e2e8f0 !important; border: none !important;',
+  },
+  {
+    id: 'text-win95', name: 'Windows 95', description: 'Retro OS', category: 'text',
+    colors: { bg: '#c0c0c0', text: '#000000', accent: '#000080' },
+    customClass: 'bg-[#c0c0c0] text-black border-t-2 border-l-2 border-white border-b-2 border-r-2 border-b-black border-r-black p-6 rounded-none font-mono',
+    rawCss: 'background-color: #c0c0c0 !important; color: #000 !important; border-top: 2px solid #fff !important; border-left: 2px solid #fff !important; border-bottom: 2px solid #000 !important; border-right: 2px solid #000 !important; padding: 1.5rem !important; border-radius: 0 !important; font-family: "Courier New", Courier, monospace !important;',
+  },
+  {
+    id: 'text-paper', name: 'Notepad', description: 'Style papier', category: 'text',
+    colors: { bg: '#fdf6e3', text: '#2c3e50', accent: '#cb4b16' },
+    customClass: 'bg-[#fdf6e3] text-[#2c3e50] border-l-4 border-[#cb4b16] shadow-md p-6 rounded-r-lg font-serif',
+    rawCss: 'background-color: #fdf6e3 !important; color: #2c3e50 !important; border-left: 4px solid #cb4b16 !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; padding: 1.5rem !important; border-radius: 0 0.5rem 0.5rem 0 !important; font-family: Georgia, serif !important;',
+  },
+  {
+    id: 'text-catppuccin', name: 'Catppuccin Mocha', description: 'Pastel chaleureux', category: 'text',
+    colors: { bg: '#1e1e2e', text: '#cdd6f4', accent: '#cba6f7', secondary: '#89b4fa' },
+    animation: 'fade-in',
+    customClass: 'bg-[#1e1e2e] rounded-xl shadow-xl p-6 text-[#cdd6f4] border border-[#313244]',
+    rawCss: 'background-color: #1e1e2e !important; color: #cdd6f4 !important; border-radius: 0.75rem !important; padding: 1.5rem !important; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1) !important; border: 1px solid #313244 !important;',
+  },
+  {
+    id: 'text-github', name: 'GitHub Light', description: 'Format readme', category: 'text',
+    colors: { bg: '#ffffff', text: '#24292f', accent: '#0969da', secondary: '#57606a' },
+    animation: 'none',
+    customClass: 'bg-white border border-[#d0d7de] p-6 rounded-md text-[#24292f]',
+    rawCss: 'background-color: #ffffff !important; color: #24292f !important; border: 1px solid #d0d7de !important; padding: 1.5rem !important; border-radius: 0.375rem !important;',
+  },
+  {
+    id: 'text-night-owl', name: 'Night Owl', description: 'Sombre et bleuté', category: 'text',
+    colors: { bg: '#011627', text: '#d6deeb', accent: '#82aaff', secondary: '#c792ea' },
+    animation: 'zoom-in',
+    customClass: 'bg-[#011627] rounded-xl p-6 text-[#d6deeb] border border-[#1d3b53]',
+    rawCss: 'background-color: #011627 !important; color: #d6deeb !important; padding: 1.5rem !important; border-radius: 0.75rem !important; border: 1px solid #1d3b53 !important;',
+  },
+  {
+    id: 'text-synthwave', name: 'Synthwave', description: 'Neon Glow', category: 'text',
+    colors: { bg: '#2b213a', text: '#f8f8f2', accent: '#36f9f6', secondary: '#f92aad' },
+    animation: 'neon-flicker',
+    customClass: 'bg-[#2b213a] rounded-lg p-6 text-[#f8f8f2] border border-[#f92aad]',
+    rawCss: 'background-color: #2b213a !important; color: #f8f8f2 !important; padding: 1.5rem !important; border-radius: 0.5rem !important; border: 1px solid #f92aad !important; box-shadow: 0 0 10px rgba(249,42,173,0.2) !important;',
+  },
 ];
 
 // ============================================
@@ -606,6 +925,7 @@ export function getThemesByType(type: string): Theme[] {
     'code-snippet': CODE_THEMES,
     timeline: TIMELINE_THEMES,
     stack: STACK_THEMES,
+    text: TEXT_THEMES,
   };
   return themeMap[type] || [];
 }
@@ -617,6 +937,7 @@ export function getThemeById(id: string): Theme | undefined {
     ...CODE_THEMES,
     ...TIMELINE_THEMES,
     ...STACK_THEMES,
+    ...TEXT_THEMES,
   ];
   return allThemes.find((t) => t.id === id);
 }

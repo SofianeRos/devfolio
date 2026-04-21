@@ -1,6 +1,6 @@
 // src/components/blocks/TerminalBlock.tsx
 import type { Block } from '../../types.ts';
-import { useBuilderStore } from '../../store/useBuilderStore';
+import { useBuilderStore } from '../../store/useBuilderStore.ts';
 import { getThemeById } from '../../lib/themes.ts';
 
 export default function TerminalBlock({ block }: { block: Block }) {
@@ -10,7 +10,7 @@ export default function TerminalBlock({ block }: { block: Block }) {
   const theme = block.theme ? getThemeById(block.theme) : null;
 
   // Données par défaut
-  const lines = block.content.lines || [
+  const lines = block.content?.lines || [
     { label: 'whoami', value: 'Passionné par l\'architecture logicielle et le Clean Code.' },
     { label: 'location', value: 'Paris, France' },
     { label: 'status', value: 'En recherche d\'opportunités Fullstack React/Node.' }
@@ -31,7 +31,7 @@ export default function TerminalBlock({ block }: { block: Block }) {
   };
 
   const getTextColor = () => theme?.colors.text || '#e0e0e0';
-  const getAccentColor = () => theme?.colors.accent || '#61dafb';
+  const getAccentColor = () => block.styles?.accentColor || theme?.colors.accent || '#61dafb';
   const getSecondaryColor = () => theme?.colors.secondary || '#27c93f';
 
   return (
@@ -92,4 +92,3 @@ export default function TerminalBlock({ block }: { block: Block }) {
     </div>
   );
 }
-

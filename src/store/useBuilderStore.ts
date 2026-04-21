@@ -12,7 +12,7 @@ export const useBuilderStore = create<BuilderState>()(
       selectedBlockId: null,
 
       // Ajouter un bloc avec des valeurs par défaut selon le type
-      addBlock: (type: BlockType) => {
+      addBlock: (type: BlockType, index?: number) => {
         const newBlock: Block = {
           id: uuidv4(),
           type,
@@ -22,7 +22,15 @@ export const useBuilderStore = create<BuilderState>()(
             borderRadius: '8px',
           },
         };
-        set((state: BuilderState) => ({ blocks: [...state.blocks, newBlock] }));
+        set((state: BuilderState) => {
+          const newBlocks = [...state.blocks];
+          if (index !== undefined && index >= 0 && index <= newBlocks.length) {
+            newBlocks.splice(index, 0, newBlock);
+          } else {
+            newBlocks.push(newBlock);
+          }
+          return { blocks: newBlocks };
+        });
       },
 
       // Mettre à jour les données ou le style d'un bloc précis

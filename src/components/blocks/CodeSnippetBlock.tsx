@@ -1,5 +1,5 @@
 import type { Block } from '../../types.ts';
-import { useBuilderStore } from '../../store/useBuilderStore';
+import { useBuilderStore } from '../../store/useBuilderStore.ts';
 import { getThemeById } from '../../lib/themes.ts';
 import { Copy } from 'lucide-react';
 import { useState } from 'react';
@@ -13,7 +13,7 @@ export default function CodeSnippetBlock({ block }: { block: Block }) {
     title = 'Code Example',
     code = 'function hello() {\n  console.log("Hello, World!");\n}',
     language = 'javascript'
-  } = block.content as { title?: string; code?: string; language?: string };
+  } = (block.content || {}) as { title?: string; code?: string; language?: string };
 
   const handleTitleChange = (newTitle: string) => {
     updateBlock(block.id, {
@@ -42,7 +42,7 @@ export default function CodeSnippetBlock({ block }: { block: Block }) {
   const LANGUAGE_OPTIONS = ['javascript', 'typescript', 'python', 'rust', 'solidity', 'gdscript', 'bash', 'html', 'css', 'sql', 'java', 'go'];
   const bgColor = theme?.colors?.bg || '#1e293b';
   const textColor = theme?.colors?.text || '#cbd5e1';
-  const accentColor = theme?.colors?.accent || '#818cf8';
+  const accentColor = block.styles?.accentColor || theme?.colors?.accent || '#818cf8';
 
   return (
     <div className="w-full space-y-3">

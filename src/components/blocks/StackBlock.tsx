@@ -1,5 +1,5 @@
 import type { Block } from '../../types.ts';
-import { useBuilderStore } from '../../store/useBuilderStore';
+import { useBuilderStore } from '../../store/useBuilderStore.ts';
 import { getThemeById } from '../../lib/themes.ts';
 import { Plus, Trash2 } from 'lucide-react';
 
@@ -28,11 +28,11 @@ export default function StackBlock({ block }: { block: Block }) {
     updateBlock(block.id, { content: { ...block.content, skills: newSkills } });
   };
 
-  const barColor = theme?.colors?.accent || '#6366f1';
+  const barColor = block.styles?.accentColor || theme?.colors?.accent || '#6366f1';
   const textColor = theme?.colors?.text || '#cbd5e1';
 
   return (
-    <div className="w-full space-y-4">
+    <div className={`w-full space-y-4 transition-all ${theme?.customClass || 'p-2'}`}>
       {skills.map((skill, index) => (
         <div key={index} className="space-y-2">
           <div className="flex items-center justify-between gap-2">

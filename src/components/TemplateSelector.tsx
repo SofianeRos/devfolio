@@ -1,6 +1,4 @@
 // src/components/TemplateSelector.tsx
-import { useBuilderStore } from '../store/useBuilderStore';
-import { v4 as uuid } from 'uuid';
 import type { Block } from '../types.ts';
 
 interface Template {

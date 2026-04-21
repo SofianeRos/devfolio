@@ -23,7 +23,7 @@ export interface BuilderState {
   blocks: Block[];
   selectedBlockId: string | null;
 
-  addBlock: (type: BlockType) => void;
+  addBlock: (type: BlockType, index?: number) => void;
   updateBlock: (id: string, updates: Partial<Block>) => void;
   removeBlock: (id: string) => void;
   reorderBlocks: (activeId: string, overId: string) => void;
@@ -48,5 +48,5 @@ export interface Theme {
   borderRadius?: string;
   shadow?: string;
   customClass?: string;
+  rawCss?: string; // CSS pur injecté à l'export statique
 }
-
