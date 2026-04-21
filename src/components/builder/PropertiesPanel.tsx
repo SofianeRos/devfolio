@@ -1,7 +1,7 @@
 // src/components/builder/PropertiesPanel.tsx
 import { useState } from 'react';
 import { useBuilderStore } from '../../store/useBuilderStore.ts';
-import { Palette, Info } from 'lucide-react';
+import { Palette, Info, Settings, Type, LayoutTemplate } from 'lucide-react';
 import { getThemesByType, getThemeById } from '../../lib/themes.ts';
 import ThemeGallery from '../ThemeGallery.tsx';
 
@@ -12,12 +12,31 @@ const ANIMATIONS = [
   { group: 'Special', items: ['matrix-glow', 'neon-border', 'pulse-fast', 'spin-slow'] },
 ];
 
+const FONTS = [
+  { name: 'Inter', value: "'Inter', sans-serif" },
+  { name: 'Roboto', value: "'Roboto', sans-serif" },
+  { name: 'Poppins', value: "'Poppins', sans-serif" },
+  { name: 'Fira Code (Code)', value: "'Fira Code', monospace" },
+  { name: 'Playfair Display (Serif)', value: "'Playfair Display', serif" },
+  { name: 'Outfit', value: "'Outfit', sans-serif" },
+];
+
+const BORDER_RADIUS = [
+  { label: 'Carré', value: '0px' },
+  { label: 'Subtil', value: '0.375rem' },
+  { label: 'Arrondi', value: '0.75rem' },
+  { label: 'Pilule', value: '9999px' },
+];
+
 export default function PropertiesPanel() {
   const selectedBlockId = useBuilderStore((s) => s.selectedBlockId);
   const blocks = useBuilderStore((s) => s.blocks);
+  const settings = useBuilderStore((s) => s.settings);
   const updateBlock = useBuilderStore((s) => s.updateBlock);
+  const updateSettings = useBuilderStore((s) => s.updateSettings);
   const [showGallery, setShowGallery] = useState(false);
   const [previewAnimation, setPreviewAnimation] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'block' | 'global'>('block');
 
   const selectedBlock = blocks.find((b) => b.id === selectedBlockId);
   const availableThemes = selectedBlock ? getThemesByType(selectedBlock.type) : [];
@@ -175,29 +194,64 @@ export default function PropertiesPanel() {
                 </div>
               )}
 
-              {/* Couleur d'accentuation manuelle */}
-              <div className="pt-2">
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs font-bold text-emerald-400 uppercase">🎨 Couleur Principale</label>
-                  {selectedBlock.styles?.accentColor && (
-                    <button 
-                      onClick={() => handleStyleChange('accentColor', undefined)}
-                      className="text-[10px] text-slate-400 hover:text-white transition-colors underline"
-                    >
-                      Réinitialiser
-                    </button>
-                  )}
+              {/* Outils de surchage de couleurs */}
+              <div className="pt-4 border-t border-slate-700/50">
+                <label className="text-xs font-bold text-emerald-400 uppercase block mb-3">🎨 Couleurs du Bloc</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-slate-800 p-2 rounded-lg border border-slate-700 flex flex-col items-center gap-1">
+                    <span className="text-[10px] text-slate-400 font-semibold uppercase">Accent</span>
+                    <input type="color" value={selectedBlock.styles?.accentColor || selectedBlockTheme?.colors.accent || '#6366f1'} onChange={(e) => handleStyleChange('accentColor', e.target.value)} className="w-full h-6 cursor-pointer" />
+                  </div>
+                  <div className="bg-slate-800 p-2 rounded-lg border border-slate-700 flex flex-col items-center gap-1">
+                    <span className="text-[10px] text-slate-400 font-semibold uppercase">Texte</span>
+                    <input type="color" value={selectedBlock.styles?.textColor || selectedBlockTheme?.colors.text || '#ffffff'} onChange={(e) => handleStyleChange('textColor', e.target.value)} className="w-full h-6 cursor-pointer" />
+                  </div>
+                  <div className="bg-slate-800 p-2 rounded-lg border border-slate-700 flex flex-col items-center gap-1 col-span-2">
+                    <div className="flex justify-between w-full">
+                      <span className="text-[10px] text-slate-400 font-semibold uppercase">Arrière-plan</span>
+                      {selectedBlock.styles?.backgroundColor && <button onClick={() => handleStyleChange('backgroundColor', undefined)} className="text-[10px] text-red-400 hover:text-red-300">Retirer</button>}
+                    </div>
+                    <input type="color" value={selectedBlock.styles?.backgroundColor || '#1e293b'} onChange={(e) => handleStyleChange('backgroundColor', e.target.value)} className="w-full h-6 cursor-pointer" />
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 bg-slate-800 p-2.5 rounded-lg border border-slate-700">
-                  <input 
-                    type="color" 
-                    value={selectedBlock.styles?.accentColor || selectedBlockTheme?.colors.accent || '#6366f1'} 
-                    onChange={(e) => handleStyleChange('accentColor', e.target.value)}
-                    className="w-8 h-8 rounded cursor-pointer border-0 bg-transparent p-0"
-                  />
-                  <span className="text-xs text-slate-300 font-mono flex-1">
-                    {selectedBlock.styles?.accentColor || selectedBlockTheme?.colors.accent || '#6366f1'}
-                  </span>
+              </div>
+
+              {/* Outils de bordures & Espacements */}
+              <div className="pt-2">
+                <label className="text-xs font-bold text-emerald-400 uppercase block mb-3">📐 Structure</label>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex justify-between text-xs text-slate-400 mb-1">
+                      <span>Arrondi (Border-Radius)</span>
+                      {selectedBlock.styles?.borderRadius && <button onClick={() => handleStyleChange('borderRadius', undefined)} className="text-[10px] text-red-400">Retirer</button>}
+                    </div>
+                    <div className="flex bg-slate-800 rounded-lg p-1 border border-slate-700">
+                      {BORDER_RADIUS.map(br => (
+                        <button 
+                          key={br.label}
+                          onClick={() => handleStyleChange('borderRadius', br.value)}
+                          className={`flex-1 py-1 text-[10px] rounded transition-colors ${selectedBlock.styles?.borderRadius === br.value ? 'bg-emerald-600 text-white font-bold' : 'text-slate-400 hover:bg-slate-700'}`}
+                        >
+                          {br.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between text-xs text-slate-400 mb-1">
+                      <span>Marge Interne (Padding)</span>
+                      {selectedBlock.styles?.padding && <button onClick={() => handleStyleChange('padding', undefined)} className="text-[10px] text-red-400">Retirer</button>}
+                    </div>
+                    <input 
+                      type="range" 
+                      min="0" max="64" step="4"
+                      value={parseInt(selectedBlock.styles?.padding || '24')}
+                      onChange={(e) => handleStyleChange('padding', `${e.target.value}px`)}
+                      className="w-full accent-emerald-500"
+                    />
+                    <div className="text-center text-xs text-slate-500 font-mono mt-1">{selectedBlock.styles?.padding || 'Par défaut'}</div>
+                  </div>
                 </div>
               </div>
 

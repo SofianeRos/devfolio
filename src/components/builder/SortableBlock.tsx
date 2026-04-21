@@ -102,7 +102,15 @@ export default function SortableBlock({ block }: { block: Block }) {
 
       <div className="text-xs font-mono text-indigo-400 mb-2 uppercase tracking-widest">{block.type}</div>
       
-      <div className="p-4">
+      <div 
+        className="p-4 transition-all duration-300"
+        style={{
+          backgroundColor: block.styles?.backgroundColor,
+          color: block.styles?.textColor,
+          borderRadius: block.styles?.borderRadius,
+          padding: block.styles?.padding,
+        }}
+      >
         {renderBlockContent()}
       </div>
     </div>

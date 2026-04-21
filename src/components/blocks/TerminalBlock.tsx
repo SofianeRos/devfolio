@@ -30,7 +30,7 @@ export default function TerminalBlock({ block }: { block: Block }) {
     return `w-full ${theme.customClass || ''} overflow-hidden font-mono`;
   };
 
-  const getTextColor = () => theme?.colors.text || '#e0e0e0';
+  const getTextColor = () => block.styles?.textColor || theme?.colors.text || '#e0e0e0';
   const getAccentColor = () => block.styles?.accentColor || theme?.colors.accent || '#61dafb';
   const getSecondaryColor = () => theme?.colors.secondary || '#27c93f';
 

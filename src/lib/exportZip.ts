@@ -1,7 +1,7 @@
 // src/lib/exportZip.ts
 import JSZip from 'jszip';
 
-export async function downloadZip(htmlBody: string, css: string, js: string, filename = 'mon-portfolio.zip') {
+export async function downloadZip(htmlBody: string, css: string, js: string, fontUrl: string, filename = 'mon-portfolio.zip') {
   const zip = new JSZip();
 
   const fullHtml = `<!DOCTYPE html>
@@ -11,6 +11,7 @@ export async function downloadZip(htmlBody: string, css: string, js: string, fil
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mon Portfolio DevFolio</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="${fontUrl}" rel="stylesheet" />
   <link rel="stylesheet" href="main.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 </head>

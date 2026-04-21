@@ -23,7 +23,7 @@ export default function HeaderBlock({ block }: { block: Block }) {
   };
 
   const accentColor = block.styles?.accentColor || theme?.colors?.accent || '#818cf8';
-  const textColor = theme?.colors?.text || '#e2e8f0';
+  const textColor = block.styles?.textColor || theme?.colors?.text || '#e2e8f0';
 
   return (
     <div className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-all ${theme?.customClass || 'p-2'}`}>

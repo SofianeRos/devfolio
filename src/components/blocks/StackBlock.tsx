@@ -29,7 +29,7 @@ export default function StackBlock({ block }: { block: Block }) {
   };
 
   const barColor = block.styles?.accentColor || theme?.colors?.accent || '#6366f1';
-  const textColor = theme?.colors?.text || '#cbd5e1';
+  const textColor = block.styles?.textColor || theme?.colors?.text || '#cbd5e1';
 
   return (
     <div className={`w-full space-y-4 transition-all ${theme?.customClass || 'p-2'}`}>

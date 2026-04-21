@@ -19,9 +19,15 @@ export interface Block {
   animation?: string; // Nuevo : animation CSS appliquée au bloc
 }
 
+export interface GlobalSettings {
+  fontFamily: string;
+  backgroundColor: string;
+}
+
 export interface BuilderState {
   blocks: Block[];
   selectedBlockId: string | null;
+  settings: GlobalSettings;
 
   addBlock: (type: BlockType, index?: number) => void;
   updateBlock: (id: string, updates: Partial<Block>) => void;
@@ -29,6 +35,7 @@ export interface BuilderState {
   reorderBlocks: (activeId: string, overId: string) => void;
   selectBlock: (id: string | null) => void;
   setBlocks: (blocks: Block[]) => void; // Pour charger des templates
+  updateSettings: (settings: Partial<GlobalSettings>) => void;
 }
 
 // Définition des thèmes disponibles

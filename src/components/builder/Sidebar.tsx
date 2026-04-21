@@ -160,12 +160,22 @@ export default function Sidebar() {
       <aside className="w-80 border-r border-builder-border bg-builder-panel flex flex-col gap-0 overflow-hidden">
         
         {/* ===== SECTION 0: ACTIONS GLOBALES ===== */}
-        <div className="p-4 border-b border-slate-700 bg-slate-800/30">
+        <div className="p-4 border-b border-slate-700 bg-slate-800/30 space-y-2">
           <button
             onClick={() => setShowTemplates(true)}
             className="w-full py-2.5 px-4 rounded-lg bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-sm transition-all shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2"
           >
             📦 Explorer les Templates
+          </button>
+          <button
+            onClick={() => {
+              if (blocks.length === 0 || window.confirm('Voulez-vous vraiment tout effacer et repartir de zéro ?')) {
+                setBlocks([]);
+              }
+            }}
+            className="w-full py-2 px-4 rounded-lg bg-slate-800 hover:bg-red-500/20 border border-slate-700 hover:border-red-500/50 text-slate-400 hover:text-red-400 font-semibold text-xs transition-all flex items-center justify-center gap-2"
+          >
+            🗑️ Partir de zéro
           </button>
         </div>
 
@@ -253,6 +263,18 @@ export default function Sidebar() {
 
             {/* Grille de Templates */}
             <div className="p-6 overflow-y-auto flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-slate-900/50">
+              {/* Option Vierge */}
+              <div 
+                onClick={() => { setBlocks([]); setShowTemplates(false); }}
+                className="bg-slate-800/30 border-2 border-dashed border-slate-600 rounded-xl p-5 hover:border-slate-400 hover:bg-slate-800/80 transition-all flex flex-col items-center justify-center text-center cursor-pointer group"
+              >
+                <div className="w-16 h-16 rounded-full bg-slate-700 group-hover:bg-slate-600 flex items-center justify-center text-2xl mb-4 transition-colors">
+                  ✨
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Toile vierge</h3>
+                <p className="text-sm text-slate-400">Commencez avec un espace de travail totalement vide.</p>
+              </div>
+
               {TEMPLATE_OPTIONS.map((tpl) => (
                 <div key={tpl.id} className="bg-slate-800 border border-slate-700 rounded-xl p-5 hover:border-purple-500/50 transition-all hover:shadow-lg hover:shadow-purple-500/20 flex flex-col">
                   <div className="flex items-center gap-3 mb-3">

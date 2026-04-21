@@ -1,5 +1,5 @@
 // src/App.tsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { DragEndEvent } from '@dnd-kit/core';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -29,6 +29,7 @@ export default function App() {
   const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
 
   const blocks = useBuilderStore((s) => s.blocks);
+  const settings = useBuilderStore((s) => s.settings);
   const reorderBlocks = useBuilderStore((s) => s.reorderBlocks);
 
   // Configurer les capteurs pour différencier un "clic" d'un "glisser" (drag)
@@ -39,8 +40,24 @@ export default function App() {
     useSensor(KeyboardSensor)
   );
 
+  // Injection dynamique de la police Google Fonts
+  useEffect(() => {
+    const fontName = settings.fontFamily.split(',')[0].replace(/'/g, '').trim();
+    const fontUrl = `https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}:wght@300;400;500;600;700&display=swap`;
+    let link = document.getElementById('google-font-preview') as HTMLLinkElement;
+    if (!link) {
+      link = document.createElement('link');
+      link.id = 'google-font-preview';
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+    link.href = fontUrl;
+  }, [settings.fontFamily]);
+
+  const getFontUrl = () => `https://fonts.googleapis.com/css2?family=${settings.fontFamily.split(',')[0].replace(/'/g, '').trim().replace(/ /g, '+')}:wght@300;400;500;600;700&display=swap`;
+
   const handleShowPreview = () => {
-    const site = generateStaticSite(blocks);
+    const site = generateStaticSite(blocks, settings);
     setGeneratedSite(site);
     setShowPreview(true);
     setDeploySuccess(false);
@@ -52,7 +69,7 @@ export default function App() {
   const handleDownloadZip = async () => {
     if (!generatedSite) return;
     try {
-      await downloadZip(generatedSite.htmlBody, generatedSite.css, generatedSite.js);
+      await downloadZip(generatedSite.htmlBody, generatedSite.css, generatedSite.js, getFontUrl());
     } catch (error) {
       console.error("Erreur d'export ZIP:", error);
     }
@@ -71,6 +88,7 @@ export default function App() {
   <title>Portfolio Développeur</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="main.css">
+  <link href="${getFontUrl()}" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 </head>
 <body>
@@ -138,7 +156,10 @@ ${generatedSite.htmlBody}
         <Sidebar />
 
         {/* 2. Zone centrale : Le CV en cours de construction */}
-        <main className="flex-1 overflow-y-auto p-12 bg-slate-900/50 relative">
+        <main 
+          className="flex-1 overflow-y-auto p-12 relative transition-colors duration-500"
+          style={{ backgroundColor: settings.backgroundColor, fontFamily: settings.fontFamily }}
+        >
           <div className="max-w-4xl mx-auto">
             <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
               <Canvas />
@@ -338,6 +359,7 @@ ${generatedSite.htmlBody}
                           <title>Aperçu du Portfolio</title>
                           <script src="https://cdn.tailwindcss.com"></script>
                           <style>${generatedSite.css}</style>
+                          <link href="${getFontUrl()}" rel="stylesheet" />
                           <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
                           <style>
                             /* Scrollbar personnalisée pour le CV */

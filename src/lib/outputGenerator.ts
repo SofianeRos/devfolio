@@ -120,6 +120,10 @@ function renderBlockToHtml(block: Block): string {
     
     const customStyles = [];
     if (block.styles?.accentColor) customStyles.push(`--accent-color: ${block.styles.accentColor}`);
+    if (block.styles?.backgroundColor) customStyles.push(`background-color: ${block.styles.backgroundColor} !important`);
+    if (block.styles?.textColor) customStyles.push(`color: ${block.styles.textColor} !important`);
+    if (block.styles?.borderRadius) customStyles.push(`border-radius: ${block.styles.borderRadius} !important`);
+    if (block.styles?.padding) customStyles.push(`padding: ${block.styles.padding} !important`);
     const styleAttr = customStyles.length > 0 ? ` style="${customStyles.join('; ')}"` : '';
 
     return `
@@ -196,8 +200,8 @@ function generateCss(blocks: Block[]): string {
     });
 
     const baseCss = `
-      :root { --bg-main: #0f172a; }
-      body { background-color: var(--bg-main); color: #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; line-height: 1.5; }
+      :root { --bg-main: var(--user-bg, #0f172a); }
+      body { background-color: var(--bg-main); color: #e2e8f0; font-family: var(--user-font, sans-serif); margin: 0; line-height: 1.5; }
       main { max-width: 896px; margin: 0 auto; padding: 3rem 1rem; display: flex; flex-direction: column; gap: 1.5rem; }
       .block-wrapper { opacity: 0; transform: translateY(10px); transition: opacity 0.5s 0.1s ease-out, transform 0.5s 0.1s ease-out; position: relative; }
       .block-wrapper.is-visible { opacity: 1; transform: none; }
@@ -325,9 +329,18 @@ function generateJs(): string {
     `;
 }
 
-export function generateStaticSite(blocks: Block[]): { htmlBody: string; css: string; js: string } {
+export function generateStaticSite(blocks: Block[], settings: any): { htmlBody: string; css: string; js: string } {
     const htmlBody = blocks.map(renderBlockToHtml).join('\n');
-    const css = generateCss(blocks);
+    
+    // Injection des variables globales configurées par l'utilisateur
+    const settingsCss = `
+      :root {
+        --user-bg: ${settings.backgroundColor};
+        --user-font: ${settings.fontFamily};
+      }
+    `;
+    
+    const css = settingsCss + generateCss(blocks);
     const js = generateJs();
     return { htmlBody, css, js };
 }

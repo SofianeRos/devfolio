@@ -13,7 +13,7 @@ export default function TextBlock({ block }: { block: Block }) {
     });
   };
 
-  const textColor = theme?.colors?.text || '#cbd5e1';
+  const textColor = block.styles?.textColor || theme?.colors?.text || '#cbd5e1';
 
   return (
     <div className={`w-full transition-all ${theme?.customClass || 'p-2'}`}>

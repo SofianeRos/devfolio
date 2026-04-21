@@ -41,7 +41,7 @@ export default function CodeSnippetBlock({ block }: { block: Block }) {
 
   const LANGUAGE_OPTIONS = ['javascript', 'typescript', 'python', 'rust', 'solidity', 'gdscript', 'bash', 'html', 'css', 'sql', 'java', 'go'];
   const bgColor = theme?.colors?.bg || '#1e293b';
-  const textColor = theme?.colors?.text || '#cbd5e1';
+  const textColor = block.styles?.textColor || theme?.colors?.text || '#cbd5e1';
   const accentColor = block.styles?.accentColor || theme?.colors?.accent || '#818cf8';
 
   return (

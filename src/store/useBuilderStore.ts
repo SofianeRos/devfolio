@@ -10,6 +10,10 @@ export const useBuilderStore = create<BuilderState>()(
     (set) => ({
       blocks: [],
       selectedBlockId: null,
+      settings: {
+        fontFamily: "'Inter', sans-serif",
+        backgroundColor: "#0f172a",
+      },
 
       // Ajouter un bloc avec des valeurs par défaut selon le type
       addBlock: (type: BlockType, index?: number) => {
@@ -67,6 +71,9 @@ export const useBuilderStore = create<BuilderState>()(
 
       // Charger une liste complète de blocs (pour les templates)
       setBlocks: (blocks: Block[]) => set({ blocks, selectedBlockId: null }),
+      
+      // Mettre à jour les paramètres globaux
+      updateSettings: (newSettings) => set((state) => ({ settings: { ...state.settings, ...newSettings } })),
     }),
     {
       name: 'devfolio-storage', // Nom de la clé dans le localStorage
