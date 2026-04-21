@@ -5,6 +5,7 @@ import type { Block } from '../../types.ts';
 import { GripVertical, Trash2 } from 'lucide-react';
 import { useBuilderStore } from '../../store/useBuilderStore';
 import HeaderBlock from '../blocks/HeaderBlock';
+import TerminalBlock from '../blocks/TerminalBlock';
 
 export default function SortableBlock({ block }: { block: Block }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: block.id });
@@ -23,6 +24,8 @@ export default function SortableBlock({ block }: { block: Block }) {
   const renderBlockContent = () => {
     switch (block.type) {
       case 'header':
+      case 'terminal':
+        return <TerminalBlock block={block} />;
         return <HeaderBlock block={block} />;
       default:
         return (
