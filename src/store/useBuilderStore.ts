@@ -56,6 +56,9 @@ export const useBuilderStore = create<BuilderState>()(
 
       // Sélectionner un bloc pour l'édition
       selectBlock: (id: string | null) => set({ selectedBlockId: id }),
+
+      // Charger une liste complète de blocs (pour les templates)
+      setBlocks: (blocks: Block[]) => set({ blocks, selectedBlockId: null }),
     }),
     {
       name: 'devfolio-storage', // Nom de la clé dans le localStorage

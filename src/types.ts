@@ -16,6 +16,7 @@ export interface Block {
   content: any;
   styles: BlockStyles;
   theme?: string; // Nouveau : référence au thème appliqué
+  animation?: string; // Nuevo : animation CSS appliquée au bloc
 }
 
 export interface BuilderState {
@@ -27,6 +28,7 @@ export interface BuilderState {
   removeBlock: (id: string) => void;
   reorderBlocks: (activeId: string, overId: string) => void;
   selectBlock: (id: string | null) => void;
+  setBlocks: (blocks: Block[]) => void; // Pour charger des templates
 }
 
 // Définition des thèmes disponibles
