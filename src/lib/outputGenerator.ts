@@ -103,6 +103,57 @@ function renderCodeSnippet(block: Block): string {
   `;
 }
 
+function renderCertifications(block: Block): string {
+  const { certifications = [] } = block.content as { certifications: { name: string, issuer: string, date: string }[] };
+  const certsHtml = certifications.map(cert => `
+    <div class="certification-item">
+      <h3 class="cert-name">${escapeHtml(cert.name)}</h3>
+      <p class="cert-issuer">${escapeHtml(cert.issuer)}</p>
+      <p class="cert-date">${escapeHtml(cert.date)}</p>
+    </div>
+  `).join('');
+  return `<div class="certifications-block"><h2>Certifications</h2>${certsHtml}</div>`;
+}
+
+function renderSocialLinks(block: Block): string {
+  const { socialLinks = [] } = block.content as { socialLinks: { platform: string, url: string, label: string }[] };
+  const linksHtml = socialLinks.map(link => `
+    <a href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer" class="social-link" title="${escapeHtml(link.label)}">
+      ${escapeHtml(link.label)}
+    </a>
+  `).join('');
+  return `<div class="social-links-block"><h2>Suivez-moi</h2><div class="social-links">${linksHtml}</div></div>`;
+}
+
+function renderMedia(block: Block): string {
+  const { mediaList = [] } = block.content as { mediaList: { type: string, url: string, title: string }[] };
+  const mediaHtml = mediaList.map(media => {
+    let embedHtml = '';
+    if (media.type === 'youtube') {
+      const youtubeId = media.url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/)?.[1] || '';
+      embedHtml = `<iframe src="https://www.youtube.com/embed/${youtubeId}" frameborder="0" allowfullscreen></iframe>`;
+    } else if (media.type === 'vimeo') {
+      const vimeoId = media.url.match(/vimeo\.com\/(\d+)/)?.[1] || '';
+      embedHtml = `<iframe src="https://player.vimeo.com/video/${vimeoId}" frameborder="0" allowfullscreen></iframe>`;
+    } else {
+      embedHtml = `<video controls><source src="${escapeHtml(media.url)}" type="video/mp4"></video>`;
+    }
+    return `<div class="media-item"><h3>${escapeHtml(media.title)}</h3>${embedHtml}</div>`;
+  }).join('');
+  return `<div class="media-block">${mediaHtml}</div>`;
+}
+
+function renderFAQ(block: Block): string {
+  const { faqItems = [] } = block.content as { faqItems: { question: string, answer: string }[] };
+  const faqHtml = faqItems.map((item) => `
+    <details class="faq-item">
+      <summary class="faq-question">${escapeHtml(item.question)}</summary>
+      <p class="faq-answer">${escapeHtml(item.answer)}</p>
+    </details>
+  `).join('');
+  return `<div class="faq-block"><h2>Questions Fréquentes</h2>${faqHtml}</div>`;
+}
+
 function renderBlockToHtml(block: Block): string {
     let contentHtml = '';
     switch (block.type) {
@@ -112,6 +163,10 @@ function renderBlockToHtml(block: Block): string {
         case 'stack': contentHtml = renderStack(block); break;
         case 'timeline': contentHtml = renderTimeline(block); break;
         case 'code-snippet': contentHtml = renderCodeSnippet(block); break;
+        case 'certifications': contentHtml = renderCertifications(block); break;
+        case 'social-links': contentHtml = renderSocialLinks(block); break;
+        case 'media': contentHtml = renderMedia(block); break;
+        case 'faq': contentHtml = renderFAQ(block); break;
         default: contentHtml = `<p>Unsupported block type: ${block.type}</p>`;
     }
 
