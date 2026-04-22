@@ -123,7 +123,6 @@ export function themesByPalette(palette: 'dark' | 'light' | 'neon' | 'gradient')
   const allThemes = [...TERMINAL_THEMES, ...HEADER_THEMES, ...CODE_THEMES, ...TIMELINE_THEMES, ...STACK_THEMES];
 
   return allThemes.filter((theme) => {
-    const colors = Object.values(theme.colors).join('').toLowerCase();
     const id = theme.id.toLowerCase();
 
     switch (palette) {

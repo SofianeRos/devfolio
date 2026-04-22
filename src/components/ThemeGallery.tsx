@@ -61,6 +61,10 @@ export default function ThemeGallery({ isOpen, onClose }: ThemeGalleryProps) {
       timeline: TIMELINE_THEMES,
       stack: STACK_THEMES,
       text: [],
+      certifications: [],
+      'social-links': [],
+      media: [],
+      faq: [],
     };
     return themeMap[type];
   };

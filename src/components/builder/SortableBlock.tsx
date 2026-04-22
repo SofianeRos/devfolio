@@ -10,6 +10,10 @@ import TextBlock from '../blocks/TextBlock.tsx';
 import StackBlock from '../blocks/StackBlock.tsx';
 import TimelineBlock from '../blocks/TimelineBlock.tsx';
 import CodeSnippetBlock from '../blocks/CodeSnippetBlock.tsx';
+import CertificationsBlock from '../blocks/CertificationsBlock.tsx';
+import SocialLinksBlock from '../blocks/SocialLinksBlock.tsx';
+import MediaBlock from '../blocks/MediaBlock.tsx';
+import FAQBlock from '../blocks/FAQBlock.tsx';
 
 // Mapping des noms d'animations aux classes Tailwind
 const ANIMATION_CLASS_MAP: Record<string, string> = {
@@ -69,6 +73,14 @@ export default function SortableBlock({ block }: { block: Block }) {
         return <TimelineBlock block={block} />;
       case 'code-snippet':
         return <CodeSnippetBlock block={block} />;
+      case 'certifications':
+        return <CertificationsBlock block={block as any} />;
+      case 'social-links':
+        return <SocialLinksBlock block={block as any} />;
+      case 'media':
+        return <MediaBlock block={block as any} />;
+      case 'faq':
+        return <FAQBlock block={block as any} />;
       default:
         return (
           <div className="p-4 bg-slate-900/50 rounded border border-slate-700 italic text-slate-500">

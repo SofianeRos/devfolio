@@ -1,6 +1,6 @@
 // src/types.ts
 
-export type BlockType = 'header' | 'terminal' | 'code-snippet' | 'timeline' | 'stack' | 'text';
+export type BlockType = 'header' | 'terminal' | 'code-snippet' | 'timeline' | 'stack' | 'text' | 'certifications' | 'social-links' | 'media' | 'faq';
 
 export interface BlockStyles {
   backgroundColor?: string;

@@ -1,7 +1,7 @@
 // src/components/builder/PropertiesPanel.tsx
 import { useState } from 'react';
 import { useBuilderStore } from '../../store/useBuilderStore.ts';
-import { Palette, Info, Settings, Type, LayoutTemplate } from 'lucide-react';
+import { Palette, Info } from 'lucide-react';
 import { getThemesByType, getThemeById } from '../../lib/themes.ts';
 import ThemeGallery from '../ThemeGallery.tsx';
 
@@ -12,14 +12,6 @@ const ANIMATIONS = [
   { group: 'Special', items: ['matrix-glow', 'neon-border', 'pulse-fast', 'spin-slow'] },
 ];
 
-const FONTS = [
-  { name: 'Inter', value: "'Inter', sans-serif" },
-  { name: 'Roboto', value: "'Roboto', sans-serif" },
-  { name: 'Poppins', value: "'Poppins', sans-serif" },
-  { name: 'Fira Code (Code)', value: "'Fira Code', monospace" },
-  { name: 'Playfair Display (Serif)', value: "'Playfair Display', serif" },
-  { name: 'Outfit', value: "'Outfit', sans-serif" },
-];
 
 const BORDER_RADIUS = [
   { label: 'Carré', value: '0px' },
@@ -31,12 +23,9 @@ const BORDER_RADIUS = [
 export default function PropertiesPanel() {
   const selectedBlockId = useBuilderStore((s) => s.selectedBlockId);
   const blocks = useBuilderStore((s) => s.blocks);
-  const settings = useBuilderStore((s) => s.settings);
   const updateBlock = useBuilderStore((s) => s.updateBlock);
-  const updateSettings = useBuilderStore((s) => s.updateSettings);
   const [showGallery, setShowGallery] = useState(false);
   const [previewAnimation, setPreviewAnimation] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'block' | 'global'>('block');
 
   const selectedBlock = blocks.find((b) => b.id === selectedBlockId);
   const availableThemes = selectedBlock ? getThemesByType(selectedBlock.type) : [];

@@ -1,6 +1,6 @@
 // src/components/builder/Sidebar.tsx
 import { useState } from 'react';
-import { Terminal, Layout, Type, List, Cpu, Code, Sparkles, Trash2, GripVertical, Loader, X, ChevronDown } from 'lucide-react';
+import { Terminal, Layout, Type, List, Cpu, Code, Sparkles, Trash2, GripVertical, Loader, X, ChevronDown, Award, Share2, Play, HelpCircle } from 'lucide-react';
 import { useBuilderStore } from '../../store/useBuilderStore.ts';
 import type { BlockType, Block } from '../../types.ts';
 import { useSortable, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -22,6 +22,10 @@ const BLOCK_LIBRARY: { type: BlockType; label: string; icon: any; description: s
   { type: 'timeline', label: '📅 Expérience', icon: List, description: 'Historique professionnel' },
   { type: 'code-snippet', label: '💻 Code', icon: Code, description: 'Bloc de code coloré' },
   { type: 'text', label: '📝 Texte', icon: Type, description: 'Paragraphes personnalisés' },
+  { type: 'certifications', label: '🎓 Certifications', icon: Award, description: 'Timeline des certifications' },
+  { type: 'social-links', label: '📱 Réseaux', icon: Share2, description: 'Icônes réseaux sociaux' },
+  { type: 'media', label: '🎥 Vidéos', icon: Play, description: 'YouTube, Vimeo, vidéos' },
+  { type: 'faq', label: '❓ FAQ', icon: HelpCircle, description: 'Questions fréquentes' },
 ];
 
 // Component DraggableBlockItem
