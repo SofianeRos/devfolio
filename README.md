@@ -8,7 +8,7 @@
 
 ### 🎓 Projet Scolaire
 
-Ce projet a été développé dans le cadre d'un cours de l'école où l'objectif est d'**apprendre à coder avec l'IA**. Il démontre comment utiliser les assistants IA pour :
+Ce projet a été développé dans le cadre d'un cours où l'objectif est d'**apprendre à coder avec l'IA**. Il démontre comment utiliser les assistants IA pour :
 
 - Résoudre des bugs et des erreurs TypeScript
 - Générer des composants React réutilisables
