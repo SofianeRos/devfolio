@@ -91,50 +91,95 @@ export async function importProjectFromJson(file: File): Promise<ProjectData | n
 }
 
 /**
- * Importe un projet depuis une URL GitHub (raw.githubusercontent.com)
+ * Importe un projet depuis une URL GitHub (raw.githubusercontent.com ou API GitHub)
  * Exemple: https://raw.githubusercontent.com/username/repo/branch/path/to/project.json
  * Ou simplement: username/repo/branch/path (sera converti automatiquement)
+ * Token optionnel pour les repos privés ou pour éviter les rate limits
  */
-export async function importProjectFromGithub(githubUrl: string): Promise<ProjectData | null> {
+export async function importProjectFromGithub(githubUrl: string, token?: string): Promise<ProjectData | null> {
   try {
     let url = githubUrl.trim();
-    
-    // Convertir le format raccourci en URL raw GitHub
-    if (!url.includes('http')) {
-      // Format: username/repo/branch/path/to/project.json
+    let owner = '';
+    let repo = '';
+    let branch = '';
+    let filePath = '';
+
+    // Parser le format raccourci: username/repo/branch/path/to/project.json
+    if (!url.includes('http') && !url.includes('://')) {
       const parts = url.split('/');
       if (parts.length >= 3) {
-        const username = parts[0];
-        const repo = parts[1];
-        const branch = parts[2];
-        const filePath = parts.slice(3).join('/');
-        url = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/${filePath || 'project.json'}`;
+        owner = parts[0];
+        repo = parts[1];
+        branch = parts[2];
+        filePath = parts.slice(3).join('/') || 'project.json';
       } else {
         throw new Error('Format GitHub invalide. Utilisez: username/repo/branch/chemin/vers/project.json');
       }
-    }
-
-    // Ajouter /raw ou convertir vers raw.githubusercontent.com si nécessaire
-    if (url.includes('github.com') && !url.includes('raw.githubusercontent.com')) {
-      url = url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
-    }
-
-    // Récupérer le fichier
-    const response = await fetch(url, {
-      headers: {
-        'Accept': 'application/json',
+    } else {
+      // Parser les URL GitHub
+      if (url.includes('raw.githubusercontent.com')) {
+        // Format: https://raw.githubusercontent.com/username/repo/branch/path/to/file
+        const match = url.match(/raw\.githubusercontent\.com\/([^\/]+)\/([^\/]+)\/([^\/]+)\/(.*)/);
+        if (match) {
+          owner = match[1];
+          repo = match[2];
+          branch = match[3];
+          filePath = match[4] || 'project.json';
+        } else {
+          throw new Error('URL raw.githubusercontent.com invalide');
+        }
+      } else if (url.includes('github.com')) {
+        // Format: https://github.com/username/repo/blob/branch/path/to/file
+        const match = url.match(/github\.com\/([^\/]+)\/([^\/]+)\/blob\/([^\/]+)\/(.*)/);
+        if (match) {
+          owner = match[1];
+          repo = match[2];
+          branch = match[3];
+          filePath = match[4] || 'project.json';
+        } else {
+          throw new Error('URL github.com invalide');
+        }
+      } else {
+        throw new Error('URL GitHub non reconnue. Utilisez une URL github.com ou raw.githubusercontent.com');
       }
-    });
+    }
+
+    if (!owner || !repo || !branch || !filePath) {
+      throw new Error('Impossible de parser l\'URL GitHub. Vérifiez le format.');
+    }
+
+    // Utiliser l'API GitHub pour récupérer le fichier
+    // Cela évite les problèmes CORS et fonctionne mieux
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}?ref=${branch}`;
+    
+    const headers: HeadersInit = {
+      'Accept': 'application/vnd.github.v3.raw',
+    };
+
+    // Ajouter le token s'il est fourni (pour les repos privés ou rate limits)
+    if (token) {
+      headers['Authorization'] = `token ${token}`;
+    }
+
+    const response = await fetch(apiUrl, { headers });
 
     if (!response.ok) {
-      throw new Error(`Erreur HTTP ${response.status}: Fichier non trouvé sur GitHub`);
+      if (response.status === 404) {
+        throw new Error(`Fichier ${filePath} non trouvé dans ${owner}/${repo} (branche: ${branch})`);
+      } else if (response.status === 403) {
+        throw new Error('Accès refusé. Le repo est privé ou le token n\'est pas valide.');
+      } else if (response.status === 422) {
+        throw new Error('Branche ou fichier invalide');
+      } else {
+        throw new Error(`Erreur HTTP ${response.status}: ${response.statusText}`);
+      }
     }
 
     const projectData: ProjectData = await response.json();
 
     if (!projectData.blocks || !projectData.settings) {
-      console.error('Format de fichier JSON invalide');
-      return null;
+      console.error('Format de fichier JSON invalide. Données reçues:', projectData);
+      throw new Error('Format de fichier invalide. Le fichier doit contenir "blocks" et "settings".');
     }
 
     return projectData;

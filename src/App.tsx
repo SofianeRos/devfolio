@@ -34,6 +34,7 @@ export default function App() {
   const [importStatus, setImportStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [showGithubImport, setShowGithubImport] = useState(false);
   const [githubImportUrl, setGithubImportUrl] = useState('');
+  const [githubImportToken, setGithubImportToken] = useState('');
   const [isLoadingGithub, setIsLoadingGithub] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -167,10 +168,14 @@ export default function App() {
     }
 
     setIsLoadingGithub(true);
-    setImportMessage('');
+    setImportMessage('🔄 Récupération du fichier depuis GitHub...');
 
     try {
-      const projectData = await importProjectFromGithub(githubImportUrl);
+      // Passer le token optionnel (pour les repos privés ou eviter les rate limits)
+      const projectData = await importProjectFromGithub(
+        githubImportUrl,
+        githubImportToken || undefined
+      );
 
       if (!projectData) {
         setImportMessage('❌ Fichier non trouvé ou format invalide');
@@ -199,12 +204,14 @@ export default function App() {
       setImportStatus('success');
       setShowGithubImport(false);
       setGithubImportUrl('');
+      setGithubImportToken('');
       setTimeout(() => setImportStatus('idle'), 4000);
     } catch (error: any) {
       console.error('Erreur import GitHub:', error);
-      setImportMessage(`❌ ${error.message || 'Erreur lors de l\'import depuis GitHub'}`);
+      const errorMsg = error.message || 'Erreur lors de l\'import depuis GitHub';
+      setImportMessage(`❌ ${errorMsg}`);
       setImportStatus('error');
-      setTimeout(() => setImportStatus('idle'), 4000);
+      setTimeout(() => setImportStatus('idle'), 5000);
     } finally {
       setIsLoadingGithub(false);
     }
@@ -401,11 +408,29 @@ ${generatedSite.htmlBody}
                   </p>
                 </div>
 
+                <div>
+                  <label className="block text-sm font-semibold text-slate-300 mb-2">
+                    Token GitHub (optionnel - pour les repos privés)
+                  </label>
+                  <input
+                    type="password"
+                    value={githubImportToken}
+                    onChange={(e) => setGithubImportToken(e.target.value)}
+                    placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-colors font-mono text-sm"
+                    disabled={isLoadingGithub}
+                  />
+                  <p className="text-xs text-slate-400 mt-1">
+                    Laissez vide pour les repos publics. Générez un token sur GitHub Settings → Developer settings → Personal access tokens
+                  </p>
+                </div>
+
                 <div className="flex gap-4 pt-4 border-t border-slate-700">
                   <button
                     onClick={() => {
                       setShowGithubImport(false);
                       setGithubImportUrl('');
+                      setGithubImportToken('');
                     }}
                     disabled={isLoadingGithub}
                     className="flex-1 px-4 py-3 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 text-white rounded-xl transition-colors font-semibold"
