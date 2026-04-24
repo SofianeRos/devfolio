@@ -1,9 +1,9 @@
 // src/App.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { DragEndEvent } from '@dnd-kit/core';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Home, ArrowRight, Play, Code, X, Loader, Check, Download, Monitor, Smartphone } from 'lucide-react';
+import { Home, ArrowRight, Play, Code, X, Loader, Check, Download, Monitor, Smartphone, Upload } from 'lucide-react';
 import { useBuilderStore } from './store/useBuilderStore.ts';
 import Sidebar from './components/builder/Sidebar.tsx';
 import Canvas from './components/builder/Canvas.tsx';
@@ -12,6 +12,7 @@ import WelcomePage from './components/WelcomePage.tsx';
 import { generateStaticSite } from './lib/outputGenerator.ts';
 import { deployToGithub } from './lib/github.ts';
 import { downloadZip } from './lib/exportZip.ts';
+import { exportProject, importProject, importProjectFromJson } from './lib/projectExport.ts';
 
 export default function App() {
   const [showWelcome, setShowWelcome] = useState(true);
@@ -28,9 +29,16 @@ export default function App() {
   const [deployError, setDeployError] = useState('');
   const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
 
+  // États pour l'import/export du projet
+  const [importMessage, setImportMessage] = useState('');
+  const [importStatus, setImportStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const blocks = useBuilderStore((s) => s.blocks);
   const settings = useBuilderStore((s) => s.settings);
   const reorderBlocks = useBuilderStore((s) => s.reorderBlocks);
+  const setBlocks = useBuilderStore((s) => s.setBlocks);
+  const updateSettings = useBuilderStore((s) => s.updateSettings);
 
   // Configurer les capteurs pour différencier un "clic" d'un "glisser" (drag)
   const sensors = useSensors(
@@ -72,6 +80,78 @@ export default function App() {
       await downloadZip(generatedSite.htmlBody, generatedSite.css, generatedSite.js, getFontUrl());
     } catch (error) {
       console.error("Erreur d'export ZIP:", error);
+    }
+  };
+
+  const handleExportProject = async () => {
+    try {
+      await exportProject(blocks, settings, 'mon-cv-devfolio');
+      setImportMessage('✅ Projet exporté avec succès!');
+      setImportStatus('success');
+      setTimeout(() => setImportStatus('idle'), 3000);
+    } catch (error) {
+      console.error('Erreur export:', error);
+      setImportMessage('❌ Erreur lors de l\'export');
+      setImportStatus('error');
+      setTimeout(() => setImportStatus('idle'), 3000);
+    }
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelected = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      let projectData;
+      
+      // Essayer d'abord comme ZIP
+      if (file.name.endsWith('.zip')) {
+        projectData = await importProject(file);
+      } else if (file.name.endsWith('.json')) {
+        projectData = await importProjectFromJson(file);
+      } else {
+        setImportMessage('❌ Format non supporté (ZIP ou JSON requis)');
+        setImportStatus('error');
+        setTimeout(() => setImportStatus('idle'), 3000);
+        return;
+      }
+
+      if (!projectData) {
+        setImportMessage('❌ Erreur lors de la lecture du fichier');
+        setImportStatus('error');
+        setTimeout(() => setImportStatus('idle'), 3000);
+        return;
+      }
+
+      // Confirmer avant de remplacer
+      if (blocks.length > 0) {
+        const shouldReplace = window.confirm(
+          '⚠️ Cela remplacera tous vos blocs actuels.\n\nÊtes-vous sûr de vouloir continuer?'
+        );
+        if (!shouldReplace) return;
+      }
+
+      // Restaurer le projet
+      setBlocks(projectData.blocks);
+      updateSettings(projectData.settings);
+
+      setImportMessage(`✅ Projet importé! (${projectData.blocks.length} blocs restaurés)`);
+      setImportStatus('success');
+      setTimeout(() => setImportStatus('idle'), 4000);
+    } catch (error) {
+      console.error('Erreur import:', error);
+      setImportMessage('❌ Erreur lors de l\'import du projet');
+      setImportStatus('error');
+      setTimeout(() => setImportStatus('idle'), 3000);
+    }
+
+    // Réinitialiser l'input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -179,6 +259,46 @@ ${generatedSite.htmlBody}
           <Home size={24} className="text-slate-400 group-hover:text-white transition-colors" />
           Retour à l'accueil
         </button>
+
+        {/* Boutons Import/Export (Milieu bas) */}
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 flex-col" style={{ width: 'fit-content' }}>
+          {importStatus !== 'idle' && (
+            <div className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all animate-fade-in-down ${
+              importStatus === 'success' 
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' 
+                : 'bg-red-500/20 text-red-300 border border-red-500/30'
+            }`}>
+              {importMessage}
+            </div>
+          )}
+          <div className="flex gap-2">
+            <button
+              onClick={handleExportProject}
+              className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-800 border-2 border-slate-700 hover:bg-slate-700 hover:border-slate-500 rounded-xl transition-all shadow-lg text-white font-semibold text-sm group"
+              title="Exporter votre projet pour le réutiliser plus tard"
+            >
+              <Download size={16} className="group-hover:scale-110 transition-transform" />
+              Exporter
+            </button>
+            <button
+              onClick={handleImportClick}
+              className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-800 border-2 border-slate-700 hover:bg-slate-700 hover:border-slate-500 rounded-xl transition-all shadow-lg text-white font-semibold text-sm group"
+              title="Importer un projet sauvegardé"
+            >
+              <Upload size={16} className="group-hover:scale-110 transition-transform" />
+              Importer
+            </button>
+          </div>
+        </div>
+
+        {/* Input file caché pour l'import */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".zip,.json"
+          onChange={handleFileSelected}
+          className="hidden"
+        />
 
         {/* Bouton Suivant (Calé dans l'espace des propriétés) */}
         <button

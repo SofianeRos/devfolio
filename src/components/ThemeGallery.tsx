@@ -65,6 +65,8 @@ export default function ThemeGallery({ isOpen, onClose }: ThemeGalleryProps) {
       'social-links': [],
       media: [],
       faq: [],
+      'soft-skills': [],
+      'hard-skills': [],
     };
     return themeMap[type];
   };
