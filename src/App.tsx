@@ -12,7 +12,7 @@ import WelcomePage from './components/WelcomePage.tsx';
 import { generateStaticSite } from './lib/outputGenerator.ts';
 import { deployToGithub } from './lib/github.ts';
 import { downloadZip } from './lib/exportZip.ts';
-import { exportProject, importProject, importProjectFromJson } from './lib/projectExport.ts';
+import { exportProject, importProject, importProjectFromJson, importProjectFromGithub } from './lib/projectExport.ts';
 
 export default function App() {
   const [showWelcome, setShowWelcome] = useState(true);
@@ -32,6 +32,9 @@ export default function App() {
   // États pour l'import/export du projet
   const [importMessage, setImportMessage] = useState('');
   const [importStatus, setImportStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [showGithubImport, setShowGithubImport] = useState(false);
+  const [githubImportUrl, setGithubImportUrl] = useState('');
+  const [isLoadingGithub, setIsLoadingGithub] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const blocks = useBuilderStore((s) => s.blocks);
@@ -152,6 +155,58 @@ export default function App() {
     // Réinitialiser l'input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
+    }
+  };
+
+  const handleImportGithub = async () => {
+    if (!githubImportUrl.trim()) {
+      setImportMessage('❌ Veuillez entrer une URL ou un chemin GitHub');
+      setImportStatus('error');
+      setTimeout(() => setImportStatus('idle'), 3000);
+      return;
+    }
+
+    setIsLoadingGithub(true);
+    setImportMessage('');
+
+    try {
+      const projectData = await importProjectFromGithub(githubImportUrl);
+
+      if (!projectData) {
+        setImportMessage('❌ Fichier non trouvé ou format invalide');
+        setImportStatus('error');
+        setIsLoadingGithub(false);
+        setTimeout(() => setImportStatus('idle'), 3000);
+        return;
+      }
+
+      // Confirmer avant de remplacer
+      if (blocks.length > 0) {
+        const shouldReplace = window.confirm(
+          '⚠️ Cela remplacera tous vos blocs actuels.\n\nÊtes-vous sûr de vouloir continuer?'
+        );
+        if (!shouldReplace) {
+          setIsLoadingGithub(false);
+          return;
+        }
+      }
+
+      // Restaurer le projet
+      setBlocks(projectData.blocks);
+      updateSettings(projectData.settings);
+
+      setImportMessage(`✅ Projet importé depuis GitHub! (${projectData.blocks.length} blocs restaurés)`);
+      setImportStatus('success');
+      setShowGithubImport(false);
+      setGithubImportUrl('');
+      setTimeout(() => setImportStatus('idle'), 4000);
+    } catch (error: any) {
+      console.error('Erreur import GitHub:', error);
+      setImportMessage(`❌ ${error.message || 'Erreur lors de l\'import depuis GitHub'}`);
+      setImportStatus('error');
+      setTimeout(() => setImportStatus('idle'), 4000);
+    } finally {
+      setIsLoadingGithub(false);
     }
   };
 
@@ -288,6 +343,14 @@ ${generatedSite.htmlBody}
               <Upload size={16} className="group-hover:scale-110 transition-transform" />
               Importer
             </button>
+            <button
+              onClick={() => setShowGithubImport(true)}
+              className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-800 border-2 border-slate-700 hover:bg-slate-700 hover:border-slate-500 rounded-xl transition-all shadow-lg text-white font-semibold text-sm group"
+              title="Importer depuis GitHub"
+            >
+              <Code size={16} className="group-hover:scale-110 transition-transform" />
+              GitHub
+            </button>
           </div>
         </div>
 
@@ -299,6 +362,78 @@ ${generatedSite.htmlBody}
           onChange={handleFileSelected}
           className="hidden"
         />
+
+        {/* Modal Import GitHub */}
+        {showGithubImport && (
+          <div className="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-md flex items-center justify-center p-4">
+            <div className="bg-slate-800 border border-slate-700 p-8 rounded-2xl max-w-2xl w-full space-y-6 shadow-2xl animate-fade-in-up">
+              <div className="flex items-center justify-between">
+                <h3 className="text-2xl font-bold text-white">Importer depuis GitHub</h3>
+                <button
+                  onClick={() => {
+                    setShowGithubImport(false);
+                    setGithubImportUrl('');
+                  }}
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-300 mb-2">
+                    URL ou chemin du fichier project.json
+                  </label>
+                  <input
+                    type="text"
+                    value={githubImportUrl}
+                    onChange={(e) => setGithubImportUrl(e.target.value)}
+                    placeholder="Ex: https://raw.githubusercontent.com/username/repo/main/project.json"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-colors font-mono text-sm"
+                    disabled={isLoadingGithub}
+                  />
+                  <p className="text-xs text-slate-400 mt-2 space-y-1">
+                    <div>📝 Format d'URL GitHub raw:</div>
+                    <code className="bg-slate-900 px-2 py-1 rounded">https://raw.githubusercontent.com/username/repo/branch/project.json</code>
+                    <div className="mt-2">Ou format raccourci:</div>
+                    <code className="bg-slate-900 px-2 py-1 rounded">username/repo/main/project.json</code>
+                  </p>
+                </div>
+
+                <div className="flex gap-4 pt-4 border-t border-slate-700">
+                  <button
+                    onClick={() => {
+                      setShowGithubImport(false);
+                      setGithubImportUrl('');
+                    }}
+                    disabled={isLoadingGithub}
+                    className="flex-1 px-4 py-3 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 text-white rounded-xl transition-colors font-semibold"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    onClick={handleImportGithub}
+                    disabled={isLoadingGithub || !githubImportUrl.trim()}
+                    className="flex-1 px-4 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-xl transition-colors font-semibold flex items-center justify-center gap-2"
+                  >
+                    {isLoadingGithub ? (
+                      <>
+                        <Loader size={16} className="animate-spin" />
+                        Chargement...
+                      </>
+                    ) : (
+                      <>
+                        <Code size={16} />
+                        Importer
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Bouton Suivant (Calé dans l'espace des propriétés) */}
         <button

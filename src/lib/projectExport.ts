@@ -89,3 +89,57 @@ export async function importProjectFromJson(file: File): Promise<ProjectData | n
     return null;
   }
 }
+
+/**
+ * Importe un projet depuis une URL GitHub (raw.githubusercontent.com)
+ * Exemple: https://raw.githubusercontent.com/username/repo/branch/path/to/project.json
+ * Ou simplement: username/repo/branch/path (sera converti automatiquement)
+ */
+export async function importProjectFromGithub(githubUrl: string): Promise<ProjectData | null> {
+  try {
+    let url = githubUrl.trim();
+    
+    // Convertir le format raccourci en URL raw GitHub
+    if (!url.includes('http')) {
+      // Format: username/repo/branch/path/to/project.json
+      const parts = url.split('/');
+      if (parts.length >= 3) {
+        const username = parts[0];
+        const repo = parts[1];
+        const branch = parts[2];
+        const filePath = parts.slice(3).join('/');
+        url = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/${filePath || 'project.json'}`;
+      } else {
+        throw new Error('Format GitHub invalide. Utilisez: username/repo/branch/chemin/vers/project.json');
+      }
+    }
+
+    // Ajouter /raw ou convertir vers raw.githubusercontent.com si nécessaire
+    if (url.includes('github.com') && !url.includes('raw.githubusercontent.com')) {
+      url = url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+    }
+
+    // Récupérer le fichier
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP ${response.status}: Fichier non trouvé sur GitHub`);
+    }
+
+    const projectData: ProjectData = await response.json();
+
+    if (!projectData.blocks || !projectData.settings) {
+      console.error('Format de fichier JSON invalide');
+      return null;
+    }
+
+    return projectData;
+  } catch (error) {
+    console.error('Erreur lors de l\'import depuis GitHub:', error);
+    throw error;
+  }
+}
