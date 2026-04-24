@@ -75,18 +75,49 @@ export default function CodeSnippetBlock({ block }: { block: Block }) {
         <textarea
           value={code}
           onChange={(e) => handleCodeChange(e.target.value)}
-          className="w-full h-40 p-3 rounded font-mono text-xs outline-none focus:ring-2 ring-indigo-500/30 resize-none"
+          className="w-full p-3 rounded font-mono text-xs outline-none focus:ring-2 ring-indigo-500/30 resize-none"
           placeholder="Votre code ici..."
           spellCheck="false"
-          style={{ backgroundColor: bgColor, color: textColor }}
+          style={{
+            backgroundColor: bgColor,
+            color: textColor,
+            whiteSpace: 'pre-wrap',
+            wordWrap: 'break-word',
+            overflowWrap: 'break-word',
+            minHeight: '200px',
+            maxHeight: '400px'
+          }}
         />
-        <div className="absolute top-2 right-2 text-xs" style={{ color: accentColor }}>
+        <div className="absolute top-2 right-2 text-xs px-2 py-1 rounded" style={{ color: accentColor, backgroundColor: 'rgba(0,0,0,0.3)' }}>
           {code.split('\n').length} lignes
         </div>
       </div>
 
+      {/* Aperçu du rendu */}
+      <div className="rounded border border-slate-600 bg-slate-900/50 overflow-hidden">
+        <div className="bg-slate-800 px-3 py-2 text-xs font-mono text-slate-400 border-b border-slate-600 flex justify-between">
+          <span>{title}</span>
+          <span>{language}</span>
+        </div>
+        <pre
+          className="p-3 font-mono text-xs overflow-hidden"
+          style={{
+            backgroundColor: bgColor,
+            color: textColor,
+            margin: 0,
+            whiteSpace: 'pre-wrap',
+            wordWrap: 'break-word',
+            overflowWrap: 'break-word',
+            maxHeight: '300px',
+            overflowY: 'auto'
+          }}
+        >
+          <code>{code}</code>
+        </pre>
+      </div>
+
       <div className="text-xs text-slate-500 italic">
-        💡 Astuce: Editez directement le code et le langage
+        💡 Astuce: Le code s'affichera avec retour à la ligne automatique, sans scroll horizontal
       </div>
     </div>
   );

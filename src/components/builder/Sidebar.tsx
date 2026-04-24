@@ -19,6 +19,8 @@ const BLOCK_LIBRARY: { type: BlockType; label: string; icon: any; description: s
   { type: 'header', label: '📋 En-tête', icon: Layout, description: 'Présentation du portfolio' },
   { type: 'terminal', label: '🖥️ Terminal', icon: Terminal, description: 'Affichage de code/console' },
   { type: 'stack', label: '🎯 Compétences', icon: Cpu, description: 'Liste de vos skills' },
+  { type: 'soft-skills', label: '💬 Soft Skills', icon: Cpu, description: 'Communication, leadership...' },
+  { type: 'hard-skills', label: '⚙️ Hard Skills', icon: Cpu, description: 'Langages, outils...' },
   { type: 'timeline', label: '📅 Expérience', icon: List, description: 'Historique professionnel' },
   { type: 'code-snippet', label: '💻 Code', icon: Code, description: 'Bloc de code coloré' },
   { type: 'text', label: '📝 Texte', icon: Type, description: 'Paragraphes personnalisés' },

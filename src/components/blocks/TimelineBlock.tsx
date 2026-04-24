@@ -1,15 +1,20 @@
 import type { Block } from '../../types.ts';
 import { useBuilderStore } from '../../store/useBuilderStore.ts';
 import { getThemeById } from '../../lib/themes.ts';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, X } from 'lucide-react';
 
 export default function TimelineBlock({ block }: { block: Block }) {
   const updateBlock = useBuilderStore((state) => state.updateBlock);
   const theme = block.theme ? getThemeById(block.theme) : null;
+  const title = block.content?.title || '';
   const events = (block.content?.events || [
     { year: '2024', title: 'Position Actuelle', company: 'Current Company' },
     { year: '2022', title: 'Senior Role', company: 'Previous Company' },
   ]) as Array<{ year: string; title: string; company: string }>;
+
+  const handleTitleChange = (newTitle: string) => {
+    updateBlock(block.id, { content: { ...block.content, title: newTitle } });
+  };
 
   const handleEventChange = (index: number, field: string, value: string) => {
     const newEvents = [...events];
@@ -29,9 +34,31 @@ export default function TimelineBlock({ block }: { block: Block }) {
   };
 
   const accentColor = block.styles?.accentColor || theme?.colors?.accent || '#6366f1';
+  const textColor = block.styles?.textColor || '#ffffff';
 
   return (
     <div className={`w-full space-y-6 transition-all ${theme?.customClass || 'p-2'}`}>
+      <div className="mb-4 flex gap-2 items-end">
+        <div className="flex-1">
+          <input
+            value={title}
+            onChange={(e) => handleTitleChange(e.target.value)}
+            className="text-2xl font-bold px-2 py-1 bg-slate-700 text-slate-200 rounded outline-none focus:ring-2 ring-indigo-500/30 w-full"
+            placeholder="Titre de la section (ou laisser vide)"
+            style={{ color: textColor }}
+          />
+        </div>
+        {title && (
+          <button
+            onClick={() => handleTitleChange('')}
+            className="px-2 py-1 hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded transition-colors"
+            title="Effacer le titre"
+          >
+            <X size={18} />
+          </button>
+        )}
+      </div>
+
       {events.map((event, index) => (
         <div key={index} className="flex gap-4">
           <div className="flex flex-col items-center">

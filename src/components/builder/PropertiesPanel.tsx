@@ -1,9 +1,22 @@
 // src/components/builder/PropertiesPanel.tsx
 import { useState } from 'react';
 import { useBuilderStore } from '../../store/useBuilderStore.ts';
-import { Palette, Info } from 'lucide-react';
+import { Palette, Info, Plus, Trash2 } from 'lucide-react';
 import { getThemesByType, getThemeById } from '../../lib/themes.ts';
 import ThemeGallery from '../ThemeGallery.tsx';
+
+interface SocialLink {
+  id: string;
+  platform: 'github' | 'linkedin' | 'twitter' | 'email' | 'website';
+  url: string;
+  label: string;
+}
+
+interface FAQItem {
+  id: string;
+  question: string;
+  answer: string;
+}
 
 const ANIMATIONS = [
   { group: 'Entrance', items: ['fade-in', 'fade-in-up', 'fade-in-down', 'slide-in-right', 'slide-in-left'] },
@@ -251,6 +264,377 @@ export default function PropertiesPanel() {
                 🎨 Explorer la galerie
               </button>
             </div>
+
+            {/* ===== ÉDITION DU CONTENU - RÉSEAUX SOCIAUX ===== */}
+            {selectedBlock.type === 'social-links' && (
+              <div className="space-y-4 pt-6 mt-4 border-t border-slate-700/50">
+                <div className="flex items-center gap-2 border-b border-slate-700 pb-2">
+                  <Info size={18} className="text-green-400" />
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200">Réseaux Sociaux</h2>
+                </div>
+
+                <div className="space-y-3">
+                  {(selectedBlock.content?.socialLinks || []).map((link: SocialLink, index: number) => (
+                    <div key={link.id} className="bg-slate-800 p-3 rounded-lg border border-slate-700 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-semibold text-slate-400">Lien {index + 1}</label>
+                        <button
+                          onClick={() => {
+                            const newLinks = selectedBlock.content.socialLinks.filter((_: SocialLink, i: number) => i !== index);
+                            updateBlock(selectedBlock.id, { content: { socialLinks: newLinks } });
+                          }}
+                          className="text-red-400 hover:text-red-300 transition-colors"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                      
+                      <div>
+                        <label className="text-[10px] text-slate-400 font-semibold">Plateforme</label>
+                        <select
+                          value={link.platform}
+                          onChange={(e) => {
+                            const newLinks = [...selectedBlock.content.socialLinks];
+                            newLinks[index].platform = e.target.value;
+                            updateBlock(selectedBlock.id, { content: { socialLinks: newLinks } });
+                          }}
+                          className="w-full mt-1 px-2 py-1 bg-slate-700 text-slate-200 rounded border border-slate-600 text-xs"
+                        >
+                          <option value="github">GitHub</option>
+                          <option value="linkedin">LinkedIn</option>
+                          <option value="twitter">Twitter</option>
+                          <option value="email">Email</option>
+                          <option value="website">Site Web</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] text-slate-400 font-semibold">Label</label>
+                        <input
+                          type="text"
+                          value={link.label}
+                          onChange={(e) => {
+                            const newLinks = [...selectedBlock.content.socialLinks];
+                            newLinks[index].label = e.target.value;
+                            updateBlock(selectedBlock.id, { content: { socialLinks: newLinks } });
+                          }}
+                          className="w-full mt-1 px-2 py-1 bg-slate-700 text-slate-200 rounded border border-slate-600 text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] text-slate-400 font-semibold">URL</label>
+                        <input
+                          type="text"
+                          value={link.url}
+                          onChange={(e) => {
+                            const newLinks = [...selectedBlock.content.socialLinks];
+                            newLinks[index].url = e.target.value;
+                            updateBlock(selectedBlock.id, { content: { socialLinks: newLinks } });
+                          }}
+                          className="w-full mt-1 px-2 py-1 bg-slate-700 text-slate-200 rounded border border-slate-600 text-xs"
+                          placeholder={
+                            link.platform === 'github' ? 'Ex: username ou https://github.com/username' :
+                            link.platform === 'email' ? 'Ex: contact@gmail.com' :
+                            link.platform === 'linkedin' ? 'Ex: username ou https://linkedin.com/in/username' :
+                            link.platform === 'twitter' ? 'Ex: username ou https://twitter.com/username' :
+                            'https://exemple.com'
+                          }
+                        />
+                        <div className="text-[9px] text-slate-500 mt-1 italic">
+                          {link.platform === 'github' && '📝 Entrez votre username ou l\'URL complète'}
+                          {link.platform === 'email' && '📝 Entrez votre adresse email (ex: mon@gmail.com)'}
+                          {link.platform === 'linkedin' && '📝 Entrez votre username ou l\'URL complète'}
+                          {link.platform === 'twitter' && '📝 Entrez votre @username ou l\'URL complète'}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => {
+                    const newLinks = [
+                      ...(selectedBlock.content?.socialLinks || []),
+                      {
+                        id: Date.now().toString(),
+                        platform: 'website',
+                        url: 'https://exemple.com',
+                        label: 'Nouveau lien',
+                      },
+                    ];
+                    updateBlock(selectedBlock.id, { content: { socialLinks: newLinks } });
+                  }}
+                  className="w-full px-3 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+                >
+                  <Plus size={16} /> Ajouter un lien
+                </button>
+              </div>
+            )}
+
+            {/* ===== ÉDITION DU CONTENU - FAQ ===== */}
+            {selectedBlock.type === 'faq' && (
+              <div className="space-y-4 pt-6 mt-4 border-t border-slate-700/50">
+                <div className="flex items-center gap-2 border-b border-slate-700 pb-2">
+                  <Info size={18} className="text-orange-400" />
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200">Questions Fréquentes</h2>
+                </div>
+
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {(selectedBlock.content?.faqItems || []).map((item: FAQItem, index: number) => (
+                    <div key={item.id} className="bg-slate-800 p-3 rounded-lg border border-slate-700 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-semibold text-slate-400">Item {index + 1}</label>
+                        <button
+                          onClick={() => {
+                            const newItems = selectedBlock.content.faqItems.filter((_: FAQItem, i: number) => i !== index);
+                            updateBlock(selectedBlock.id, { content: { faqItems: newItems } });
+                          }}
+                          className="text-red-400 hover:text-red-300 transition-colors"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] text-slate-400 font-semibold">Question</label>
+                        <input
+                          type="text"
+                          value={item.question}
+                          onChange={(e) => {
+                            const newItems = [...selectedBlock.content.faqItems];
+                            newItems[index].question = e.target.value;
+                            updateBlock(selectedBlock.id, { content: { faqItems: newItems } });
+                          }}
+                          className="w-full mt-1 px-2 py-1 bg-slate-700 text-slate-200 rounded border border-slate-600 text-xs"
+                          placeholder="Quelle est votre question ?"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] text-slate-400 font-semibold">Réponse</label>
+                        <textarea
+                          value={item.answer}
+                          onChange={(e) => {
+                            const newItems = [...selectedBlock.content.faqItems];
+                            newItems[index].answer = e.target.value;
+                            updateBlock(selectedBlock.id, { content: { faqItems: newItems } });
+                          }}
+                          className="w-full mt-1 px-2 py-1 bg-slate-700 text-slate-200 rounded border border-slate-600 text-xs resize-none"
+                          rows={3}
+                          placeholder="Détails de la réponse..."
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => {
+                    const newItems = [
+                      ...(selectedBlock.content?.faqItems || []),
+                      {
+                        id: Date.now().toString(),
+                        question: 'Nouvelle question ?',
+                        answer: 'Réponse à ajouter...',
+                      },
+                    ];
+                    updateBlock(selectedBlock.id, { content: { faqItems: newItems } });
+                  }}
+                  className="w-full px-3 py-2 bg-orange-600 hover:bg-orange-500 text-white rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+                >
+                  <Plus size={16} /> Ajouter une question
+                </button>
+              </div>
+            )}
+
+            {/* ===== ÉDITION DU CONTENU - SOFT SKILLS ===== */}
+            {selectedBlock.type === 'soft-skills' && (
+              <div className="space-y-4 pt-6 mt-4 border-t border-slate-700/50">
+                <div className="flex items-center gap-2 border-b border-slate-700 pb-2">
+                  <Info size={18} className="text-cyan-400" />
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200">Soft Skills</h2>
+                </div>
+
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {(selectedBlock.content?.skills || []).map((skill: any, index: number) => (
+                    <div key={index} className="bg-slate-800 p-3 rounded-lg border border-slate-700 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-semibold text-slate-400">Skill {index + 1}</label>
+                        <button
+                          onClick={() => {
+                            const newSkills = selectedBlock.content.skills.filter((_: any, i: number) => i !== index);
+                            updateBlock(selectedBlock.id, { content: { skills: newSkills } });
+                          }}
+                          className="text-red-400 hover:text-red-300 transition-colors"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] text-slate-400 font-semibold">Nom</label>
+                        <input
+                          type="text"
+                          value={skill.name}
+                          onChange={(e) => {
+                            const newSkills = [...selectedBlock.content.skills];
+                            newSkills[index].name = e.target.value;
+                            updateBlock(selectedBlock.id, { content: { skills: newSkills } });
+                          }}
+                          className="w-full mt-1 px-2 py-1 bg-slate-700 text-slate-200 rounded border border-slate-600 text-xs"
+                          placeholder="Ex: Communication"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] text-slate-400 font-semibold">Niveau ({skill.level}%)</label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={skill.level}
+                          onChange={(e) => {
+                            const newSkills = [...selectedBlock.content.skills];
+                            newSkills[index].level = Number(e.target.value);
+                            updateBlock(selectedBlock.id, { content: { skills: newSkills } });
+                          }}
+                          className="w-full mt-1"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => {
+                    const newSkills = [
+                      ...(selectedBlock.content?.skills || []),
+                      {
+                        name: 'Nouveau Soft Skill',
+                        level: 75,
+                      },
+                    ];
+                    updateBlock(selectedBlock.id, { content: { skills: newSkills } });
+                  }}
+                  className="w-full px-3 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+                >
+                  <Plus size={16} /> Ajouter un soft skill
+                </button>
+              </div>
+            )}
+
+            {/* ===== ÉDITION DU CONTENU - HARD SKILLS ===== */}
+            {selectedBlock.type === 'hard-skills' && (
+              <div className="space-y-4 pt-6 mt-4 border-t border-slate-700/50">
+                <div className="flex items-center gap-2 border-b border-slate-700 pb-2">
+                  <Info size={18} className="text-purple-400" />
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200">Hard Skills</h2>
+                </div>
+
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {(selectedBlock.content?.skills || []).map((skill: any, index: number) => (
+                    <div key={index} className="bg-slate-800 p-3 rounded-lg border border-slate-700 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-semibold text-slate-400">Skill {index + 1}</label>
+                        <button
+                          onClick={() => {
+                            const newSkills = selectedBlock.content.skills.filter((_: any, i: number) => i !== index);
+                            updateBlock(selectedBlock.id, { content: { skills: newSkills } });
+                          }}
+                          className="text-red-400 hover:text-red-300 transition-colors"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] text-slate-400 font-semibold">Nom</label>
+                        <input
+                          type="text"
+                          value={skill.name}
+                          onChange={(e) => {
+                            const newSkills = [...selectedBlock.content.skills];
+                            newSkills[index].name = e.target.value;
+                            updateBlock(selectedBlock.id, { content: { skills: newSkills } });
+                          }}
+                          className="w-full mt-1 px-2 py-1 bg-slate-700 text-slate-200 rounded border border-slate-600 text-xs"
+                          placeholder="Ex: React"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] text-slate-400 font-semibold">Niveau ({skill.level}%)</label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={skill.level}
+                          onChange={(e) => {
+                            const newSkills = [...selectedBlock.content.skills];
+                            newSkills[index].level = Number(e.target.value);
+                            updateBlock(selectedBlock.id, { content: { skills: newSkills } });
+                          }}
+                          className="w-full mt-1"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => {
+                    const newSkills = [
+                      ...(selectedBlock.content?.skills || []),
+                      {
+                        name: 'Nouveau Hard Skill',
+                        level: 75,
+                      },
+                    ];
+                    updateBlock(selectedBlock.id, { content: { skills: newSkills } });
+                  }}
+                  className="w-full px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+                >
+                  <Plus size={16} /> Ajouter un hard skill
+                </button>
+              </div>
+            )}
+
+            {/* ===== ÉDITION DU CONTENU - TIMELINE ===== */}
+            {selectedBlock.type === 'timeline' && (
+              <div className="space-y-4 pt-6 mt-4 border-t border-slate-700/50">
+                <div className="flex items-center gap-2 border-b border-slate-700 pb-2">
+                  <Info size={18} className="text-blue-400" />
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200">Expérience</h2>
+                </div>
+
+                <div className="bg-slate-800 p-3 rounded-lg border border-slate-700 space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <label className="text-[10px] text-slate-400 font-semibold">Titre de la section</label>
+                    {selectedBlock.content?.title && (
+                      <button
+                        onClick={() => {
+                          updateBlock(selectedBlock.id, { content: { ...selectedBlock.content, title: '' } });
+                        }}
+                        className="text-[10px] text-red-400 hover:text-red-300 transition-colors font-semibold"
+                      >
+                        Effacer
+                      </button>
+                    )}
+                  </div>
+                  <input
+                    type="text"
+                    value={selectedBlock.content?.title || ''}
+                    onChange={(e) => {
+                      updateBlock(selectedBlock.id, { content: { ...selectedBlock.content, title: e.target.value } });
+                    }}
+                    className="w-full px-2 py-2 bg-slate-700 text-slate-200 rounded border border-slate-600 text-sm"
+                    placeholder="Ex: Expérience Professionnelle (laissez vide pour sans titre)"
+                  />
+                  <p className="text-[9px] text-slate-500 italic">Ce titre s'affichera en haut de la timeline</p>
+                </div>
+              </div>
+            )}
 
             {/* ===== LE BLOC ACTUEL ===== */}
             <div className="space-y-4 pt-6 mt-4 border-t border-slate-700/50">

@@ -1,6 +1,6 @@
 // src/types.ts
 
-export type BlockType = 'header' | 'terminal' | 'code-snippet' | 'timeline' | 'stack' | 'text' | 'certifications' | 'social-links' | 'media' | 'faq';
+export type BlockType = 'header' | 'terminal' | 'code-snippet' | 'timeline' | 'stack' | 'text' | 'certifications' | 'social-links' | 'media' | 'faq' | 'soft-skills' | 'hard-skills';
 
 export interface BlockStyles {
   backgroundColor?: string;
@@ -31,6 +31,7 @@ export interface BuilderState {
 
   addBlock: (type: BlockType, index?: number) => void;
   updateBlock: (id: string, updates: Partial<Block>) => void;
+  updateBlockContent: (id: string, content: any) => void;
   removeBlock: (id: string) => void;
   reorderBlocks: (activeId: string, overId: string) => void;
   selectBlock: (id: string | null) => void;
